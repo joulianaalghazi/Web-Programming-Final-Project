@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Instructor Assessments</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Montserrat", sans-serif;
+      background-color: hsl(210, 22%, 96%);
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      grid-template-rows: 120px 1fr 50px;
+      grid-template-areas:
+        "header header"
+        "sidebar main"
+        "footer footer";
+      min-height: 100vh;
+      transition: grid-template-columns 0.5s;
+    }
+
+    .grid-container.collapsed {
+      grid-template-columns: 48px 1fr;
+    }
+
+    .header {
+      grid-area: header;
+      font-size: 20px;
+      background-color: #1f2933;
+      color: white;
+      padding: 0 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 800;
+    }
+
+    .header span {
+      font-size: 20px;
+      font-weight: 400;
+      opacity: 0.95;
+    }
+
+    .main-content {
+      grid-area: main;
+      padding: 30px;
+      background-color: hsl(210, 22%, 96%);
+    }
+
+    .footer {
+      grid-area: footer;
+      background-color: #1f2933;
+      color: white;
+      text-align: center;
+      padding: 12px;
+      font-size: 14px;
+    }
+
+    .footer p {
+      margin: 0;
+    }
+
+    #nav {
+      grid-area: sidebar;
+      overflow: hidden;
+      background: #edeffb;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #head {
+      height: 48px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      font-size: 20px;
+      background: #edeffb;
+      overflow: hidden;
+    }
+
+    #nav a {
+      color: #162765;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 188px;
+      height: 40px;
+      margin: 6px;
+      border-radius: 20px;
+      font-size: 20px;
+      text-decoration: none;
+      transition: 0.4s;
+    }
+
+    #nav a:hover {
+      background: #4b5563;
+      color: #fff;
+    }
+
+    #nav a:active {
+      transform: scale(0.7);
+    }
+
+    #nav i {
+      width: 40px;
+      margin-right: 6px;
+      padding: 10px;
+    }
+
+    #table_nav {
+      font-size: 22px;
+      margin-left: 10px;
+    }
+
+    .grid-container.collapsed #table_nav,
+    .grid-container.collapsed #logo {
+      display: none;
+    }
+
+    #bars, #times {
+      cursor: pointer;
+    }
+
+    #bars {
+      font-size: 22px;
+      padding: 14px;
+      width: 48px;
+      height: 48px;
+    }
+
+    #times { display: none; }
+    .grid-container:not(.collapsed) #times { display: inline-block; }
+    .grid-container:not(.collapsed) #bars { display: none; }
+
+    #logo {
+      width: 40px;
+      height: 40px;
+      background: url(#);
+      background-size: cover;
+      margin-left: 12px;
+      display: none;
+    }
+
+    #sign {
+      margin-top: auto;
+      background: #cececf;
+    }
+
+    #sign:hover {
+      color: #374151;
+    }
+
+    .page {
+      max-width: 2000px;
+    }
+
+    .page-title {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .sub {
+      margin: 6px 0 18px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .muted { color: #6b7280; }
+    .tiny { font-size: 12px; }
+
+    .head-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .select {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
+      background: #fff;
+      min-width: 320px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 650px) {
+      .summary { grid-template-columns: 1fr; }
+      .select { min-width: 100%; }
+    }
+
+    .summary-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+    }
+
+    .summary-title { font-size: 13px; color: #6b7280; }
+    .summary-value { font-size: 26px; font-weight: 600; margin-top: 6px; }
+    .summary-value.ok { color: #065f46; }
+    .summary-value.warn { color: #b45309; }
+    .summary-sub { margin-top: 6px; font-size: 13px; }
+
+    .table-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+      margin-bottom: 14px;
+    }
+
+    .table-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .table-head h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .pill {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      color: #374151;
+      background: #f9fafb;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    .table th, .table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .table thead th {
+      font-size: 12px;
+      color: #6b7280;
+      background: #f9fafb;
+    }
+
+    .table tfoot td {
+      background: #fcfcfd;
+    }
+
+    .right { text-align: right; }
+
+    .weight {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    .btn {
+      border: 1px solid #d1d5db;
+      background: #fff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: #162765;
+      color: #fff;
+      border-color: #162765;
+    }
+
+    .btn.ghost {
+      background: transparent;
+    }
+
+    .btn.small {
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .btn.danger {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 999;
+    }
+
+    .modal {
+      width: min(760px, 96vw);
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .icon-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 8px;
+    }
+
+    .form {
+      padding: 14px;
+    }
+
+    .label {
+      display: grid;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .input {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .empty-row td {
+      text-align: center;
+      color: #6b7280;
+      padding: 24px 14px;
+    }
+
+    .grading-box {
+      margin-top: 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      background: #fafafa;
+    }
+
+    .grading-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .grading-note {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .grading-empty {
+      font-size: 14px;
+      color: #6b7280;
+      padding: 8px 0;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 580px;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .mini-table th {
+      font-size: 12px;
+      color: #6b7280;
+      background: #f9fafb;
+    }
+
+    .mini-input {
+      width: 120px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: inherit;
+    }
+
+    .mini-status {
+      font-size: 13px;
+      color: #374151;
+    }
+
+    .mini-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    /*DARK MODE*/
+    .header-right{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.theme-btn{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:600;
+  background:white;
+  color:#111827;
+}
+
+/* DARK MODE */
+body.dark-mode{
+  background:#0f172a;
+  color:#f8fafc;
+}
+
+body.dark-mode .header,
+body.dark-mode .footer{
+  background:#111827;
+}
+
+body.dark-mode .main-content{
+  background:#0f172a;
+}
+
+body.dark-mode #nav,
+body.dark-mode #head{
+  background:#1e293b;
+}
+
+body.dark-mode #nav a{
+  color:#f8fafc;
+}
+
+body.dark-mode #nav a:hover{
+  background:#334155;
+}
+
+body.dark-mode #sign{
+  background:#334155;
+}
+
+body.dark-mode .page-title,
+body.dark-mode .sub,
+body.dark-mode .muted,
+body.dark-mode .summary-title,
+body.dark-mode .summary-sub,
+body.dark-mode .grading-note,
+body.dark-mode .grading-title,
+body.dark-mode .mini-status,
+body.dark-mode .label,
+body.dark-mode span{
+  color:#e2e8f0;
+}
+
+body.dark-mode .summary-card,
+body.dark-mode .table-card,
+body.dark-mode .modal,
+body.dark-mode .grading-box{
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#f8fafc;
+}
+
+body.dark-mode .table-head,
+body.dark-mode .modal-head{
+  border-bottom:1px solid #334155;
+}
+
+body.dark-mode .table thead th,
+body.dark-mode .mini-table th{
+  background:#273449;
+  color:#e2e8f0;
+}
+
+body.dark-mode .table td,
+body.dark-mode .table th,
+body.dark-mode .mini-table td,
+body.dark-mode .mini-table th{
+  border-bottom:1px solid #334155;
+}
+
+body.dark-mode .table tfoot td{
+  background:#1e293b;
+}
+
+body.dark-mode .select,
+body.dark-mode .input,
+body.dark-mode .mini-input{
+  background:#334155;
+  color:#ffffff;
+  border:1px solid #475569;
+}
+
+body.dark-mode .pill,
+body.dark-mode .weight{
+  background:#334155;
+  border:1px solid #475569;
+  color:#f8fafc;
+}
+
+body.dark-mode .btn{
+  background:#334155;
+  color:#ffffff;
+  border:1px solid #475569;
+}
+
+body.dark-mode .btn.primary{
+  background:#162765;
+  border-color:#162765;
+}
+
+body.dark-mode .btn.danger{
+  border-color:#ef4444;
+  color:#ef4444;
+}
+
+body.dark-mode .theme-btn{
+  background:#334155;
+  color:white;
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="grid-container collapsed" id="layout">
+
+    <header class="header">
+      <h1>Student Course Companion</h1>
+      <div class="header-right">
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <span>Instructor / Admin</span>
+      </div>
+    </header>
+
+    <nav id="nav">
+      <div id="head">
+        <div id="logo"></div>
+        <i class="fa fa-bars" id="bars"></i>
+        <div id="table_nav">Table</div>
+        <i class="fa fa-times" id="times"></i>
+      </div>
+
+      <a href="professor-dashboard.html"><i class="fa-solid fa-chart-simple"></i>Dashboard</a>
+      <a href="professor-courses.html"><i class="fa-solid fa-book"></i>Courses</a>
+      <a href="professor-assessments.html"><i class="fa-solid fa-file-alt"></i>Assessments</a>
+      <a href="professor-templates.html"><i class="fa-solid fa-puzzle-piece"></i>Templates</a>
+      <a href="professor-analytics.html"><i class="fa-solid fa-chart-line"></i>Analytics</a>
+      <a href="welcome.html" id="sign"><i class="fa-solid fa-sign-out-alt"></i>Sign Out</a>
+    </nav>
+
+    <main class="main-content">
+      <div class="page">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Assessments</h1>
+            <p class="sub">Define assessment categories and their weightings for each course.</p>
+          </div>
+
+          <div class="head-actions">
+            <select class="select" id="courseSelect">
+              <option value="">Loading courses...</option>
+            </select>
+
+            <button class="btn primary" type="button" id="openModalBtn">
+              + Add assessment
+            </button>
+          </div>
+        </div>
+
+        <section class="summary">
+          <div class="summary-card">
+            <div class="summary-title">Total weight</div>
+            <div class="summary-value" id="totalWeightValue">0%</div>
+            <div class="summary-sub muted" id="totalWeightMessage">Select a course to view totals.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-title">Assessments</div>
+            <div class="summary-value" id="assessmentCountValue">0</div>
+            <div class="summary-sub muted">Number of assessments for selected course.</div>
+          </div>
+        </section>
+
+
+        <section class="table-card">
+          <div class="table-head">
+            <h3>Assessments</h3>
+            <span class="pill" id="coursePill">Course: None selected</span>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th class="right">Weight</th>
+                  <th class="right">Total Marks</th>
+                  <th>Due Date</th>
+                  <th class="right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="assessmentsTableBody"></tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="2"><strong>Total</strong></td>
+                  <td class="right"><strong id="tableTotalWeight">0%</strong></td>
+                  <td colspan="3"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </section>
+
+        <div class="modal-backdrop" id="assessmentModal">
+          <div class="modal">
+            <div class="modal-head">
+              <h3 id="modalTitle">Add assessment</h3>
+              <button class="icon-btn" type="button" id="closeModalBtn">✕</button>
+            </div>
+
+            <div class="form">
+              <input type="hidden" id="assessmentId" />
+
+              <label class="label">
+                Course
+                <select class="input" id="modalCourseId">
+                  <option value="">Select course</option>
+                </select>
+              </label>
+
+              <label class="label">
+                Title
+                <input class="input" id="assessmentTitle" type="text" placeholder="e.g., Quiz 1" />
+              </label>
+
+              <label class="label">
+                Category
+                <select class="input" id="assessmentCategory">
+                  <option value="Assignment">Assignment</option>
+                  <option value="Quiz">Quiz</option>
+                  <option value="Lab">Lab</option>
+                  <option value="Project">Project</option>
+                  <option value="Exam">Exam</option>
+                  <option value="Midterm">Midterm</option>
+                  <option value="Final">Final</option>
+                </select>
+              </label>
+
+              <label class="label">
+                Weight (%)
+                <input class="input" id="assessmentWeight" type="number" min="0" step="0.01" placeholder="e.g., 15" />
+              </label>
+
+              <label class="label">
+                Total marks
+                <input class="input" id="assessmentTotalMarks" type="number" min="0" step="0.01" placeholder="e.g., 20" />
+              </label>
+
+              <div id="gradingSection" class="grading-box">
+                <div class="grading-title">Student grades</div>
+                <div class="grading-note">
+                  Only students enrolled in this course/section are shown here.
+                </div>
+
+                <div class="table-wrap">
+                  <table class="mini-table">
+                    <thead>
+                      <tr>
+                        <th>Student</th>
+                        <th>Email</th>
+                        <th class="right">Earned Marks</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="gradingStudentsBody">
+                      <tr>
+                        <td colspan="4" class="grading-empty">Select or edit an assessment to load enrolled students.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="mini-actions">
+                  <button class="btn small" type="button" id="saveGradesBtn">Save Grades</button>
+                </div>
+              </div>
+
+              <label class="label">
+                Due date
+                <input class="input" id="assessmentDueDate" type="date" />
+              </label>
+
+              <div class="actions">
+                <button class="btn ghost" type="button" id="cancelModalBtn">
+                  Cancel
+                </button>
+                <button class="btn primary" type="button" id="saveAssessmentBtn">
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; Student Course Companion</p>
+    </footer>
+  </div>
+
+  <script>
+    //DARK MODE
+    const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+
+    const professorUser = JSON.parse(localStorage.getItem("professorUser") || "null");
+
+if (!professorUser) {
+  window.location.href = "professor-login.html";
+}
+
+    const API_COURSES = "http://localhost:3000/courses";
+    const API_ASSESSMENTS = "http://localhost:3000/professor/assessments";
+
+    const layout = document.getElementById("layout");
+    const bars = document.getElementById("bars");
+    const times = document.getElementById("times");
+
+    const courseSelect = document.getElementById("courseSelect");
+    const modalCourseId = document.getElementById("modalCourseId");
+    const assessmentsTableBody = document.getElementById("assessmentsTableBody");
+    const coursePill = document.getElementById("coursePill");
+    const totalWeightValue = document.getElementById("totalWeightValue");
+    const totalWeightMessage = document.getElementById("totalWeightMessage");
+    const assessmentCountValue = document.getElementById("assessmentCountValue");
+    const tableTotalWeight = document.getElementById("tableTotalWeight");
+
+
+    const assessmentModal = document.getElementById("assessmentModal");
+    const openModalBtn = document.getElementById("openModalBtn");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const cancelModalBtn = document.getElementById("cancelModalBtn");
+    const saveAssessmentBtn = document.getElementById("saveAssessmentBtn");
+    const saveGradesBtn = document.getElementById("saveGradesBtn");
+    const modalTitle = document.getElementById("modalTitle");
+
+    const assessmentIdInput = document.getElementById("assessmentId");
+    const assessmentTitleInput = document.getElementById("assessmentTitle");
+    const assessmentCategoryInput = document.getElementById("assessmentCategory");
+    const assessmentWeightInput = document.getElementById("assessmentWeight");
+    const assessmentTotalMarksInput = document.getElementById("assessmentTotalMarks");
+    const assessmentDueDateInput = document.getElementById("assessmentDueDate");
+    const gradingStudentsBody = document.getElementById("gradingStudentsBody");
+
+    let allCourses = [];
+    let allAssessments = [];
+    let editingAssessmentId = null;
+
+    bars.addEventListener("click", () => {
+      layout.classList.remove("collapsed");
+    });
+
+    times.addEventListener("click", () => {
+      layout.classList.add("collapsed");
+    });
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function resetGradingSection(message = "Select or edit an assessment to load enrolled students.") {
+      gradingStudentsBody.innerHTML = `
+        <tr>
+          <td colspan="4" class="grading-empty">${escapeHtml(message)}</td>
+        </tr>
+      `;
+    }
+
+    function resetModalForm() {
+      editingAssessmentId = null;
+      assessmentIdInput.value = "";
+      assessmentTitleInput.value = "";
+      assessmentCategoryInput.value = "Assignment";
+      assessmentWeightInput.value = "";
+      assessmentTotalMarksInput.value = "";
+      assessmentDueDateInput.value = "";
+      modalTitle.textContent = "Add assessment";
+      saveAssessmentBtn.textContent = "Save";
+      resetGradingSection();
+    }
+
+    function openModal() {
+      resetModalForm();
+      modalCourseId.value = courseSelect.value || "";
+      assessmentModal.style.display = "flex";
+    }
+
+    function closeModal() {
+      assessmentModal.style.display = "none";
+      resetModalForm();
+    }
+
+    function formatDateForInput(dateString) {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "";
+      return date.toISOString().split("T")[0];
+    }
+
+    function formatDateForDisplay(dateString) {
+      if (!dateString) return "—";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return dateString;
+      return date.toLocaleDateString();
+    }
+
+    async function loadCourses() {
+      const response = await fetch(`${API_COURSES}?created_by=${professorUser.id}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to load courses");
+      }
+
+      allCourses = data;
+
+      if (!allCourses.length) {
+        courseSelect.innerHTML = '<option value="">No courses available</option>';
+        modalCourseId.innerHTML = '<option value="">No courses available</option>';
+        return;
+      }
+
+      const courseOptions = allCourses.map(course => {
+        return `<option value="${course.id}">${escapeHtml(course.code)} — ${escapeHtml(course.name)} (${escapeHtml(course.term || "")})</option>`;
+      }).join("");
+
+      courseSelect.innerHTML = courseOptions;
+      modalCourseId.innerHTML = '<option value="">Select course</option>' + courseOptions;
+    }
+
+    async function loadAssessments() {
+      const response = await fetch(API_ASSESSMENTS);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to load assessments");
+      }
+
+      allAssessments = data;
+    }
+
+    function getSelectedCourse() {
+      const selectedCourseId = Number(courseSelect.value);
+      return allCourses.find(course => Number(course.id) === selectedCourseId) || null;
+    }
+
+
+
+    function renderAssessments() {
+      const selectedCourseId = Number(courseSelect.value);
+      const selectedCourse = getSelectedCourse();
+
+      if (!selectedCourseId || !selectedCourse) {
+        assessmentsTableBody.innerHTML = `
+          <tr class="empty-row">
+            <td colspan="6">Select a course to view assessments.</td>
+          </tr>
+        `;
+        coursePill.textContent = "Course: None selected";
+        totalWeightValue.textContent = "0%";
+        totalWeightValue.className = "summary-value";
+        totalWeightMessage.textContent = "Select a course to view totals.";
+        assessmentCountValue.textContent = "0";
+        tableTotalWeight.textContent = "0%";
+        return;
+      }
+
+      const filtered = allAssessments.filter(a => Number(a.course_id) === selectedCourseId);
+      const totalWeight = filtered.reduce((sum, item) => sum + Number(item.weight || 0), 0);
+
+      assessmentCountValue.textContent = String(filtered.length);
+      tableTotalWeight.textContent = `${totalWeight}%`;
+      totalWeightValue.textContent = `${totalWeight}%`;
+      coursePill.textContent = `Course: ${selectedCourse.code}`;
+
+      if (totalWeight === 100) {
+        totalWeightValue.className = "summary-value ok";
+        totalWeightMessage.textContent = "Looks good — totals add up to 100%.";
+      } else {
+        totalWeightValue.className = "summary-value warn";
+        totalWeightMessage.textContent = "Total weight should ideally be 100%.";
+      }
+
+      if (!filtered.length) {
+        assessmentsTableBody.innerHTML = `
+          <tr class="empty-row">
+            <td colspan="6">No assessments found for this course.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      assessmentsTableBody.innerHTML = filtered.map(assessment => `
+        <tr>
+          <td><strong>${escapeHtml(assessment.title)}</strong></td>
+          <td>${escapeHtml(assessment.category)}</td>
+          <td class="right"><span class="weight">${assessment.weight}%</span></td>
+          <td class="right">${assessment.total_marks}</td>
+          <td>${formatDateForDisplay(assessment.due_date)}</td>
+          <td class="right">
+            <button class="btn small" type="button" data-action="edit" data-id="${assessment.id}">Edit</button>
+            <button class="btn small danger" type="button" data-action="delete" data-id="${assessment.id}">Delete</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function loadAssessmentStudents(assessmentId) {
+      try {
+        const response = await fetch(`${API_ASSESSMENTS}/${assessmentId}/students`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load enrolled students");
+        }
+
+        if (!data.length) {
+          resetGradingSection("No students enrolled in this course yet.");
+          return;
+        }
+
+        gradingStudentsBody.innerHTML = data.map(student => `
+          <tr>
+            <td>${escapeHtml(student.name)}</td>
+            <td>${escapeHtml(student.email)}</td>
+            <td class="right">
+              <input
+                type="number"
+                class="mini-input"
+                min="0"
+                step="0.01"
+                value="${student.earned_marks ?? 0}"
+                data-student-id="${student.student_id}"
+                placeholder="Enter marks"
+              />
+            </td>
+            <td>
+              <span class="mini-status">${escapeHtml(student.status || "Pending")}</span>
+            </td>
+          </tr>
+        `).join("");
+      } catch (error) {
+        console.error("Load assessment students error:", error);
+        resetGradingSection("Could not load enrolled students.");
+      }
+    }
+
+    async function openEditModal(assessment) {
+      editingAssessmentId = assessment.id;
+      assessmentIdInput.value = assessment.id;
+      modalCourseId.value = assessment.course_id;
+      assessmentTitleInput.value = assessment.title || "";
+      assessmentCategoryInput.value = assessment.category || "Assignment";
+      assessmentWeightInput.value = assessment.weight || "";
+      assessmentTotalMarksInput.value = assessment.total_marks || "";
+      assessmentDueDateInput.value = assessment.due_date ? formatDateForInput(assessment.due_date) : "";
+      modalTitle.textContent = "Edit assessment";
+      saveAssessmentBtn.textContent = "Save Changes";
+      assessmentModal.style.display = "flex";
+
+      await loadAssessmentStudents(assessment.id);
+    }
+
+    async function saveAssessment() {
+      const payload = {
+        course_id: Number(modalCourseId.value),
+        title: assessmentTitleInput.value.trim(),
+        category: assessmentCategoryInput.value,
+        weight: Number(assessmentWeightInput.value),
+        total_marks: Number(assessmentTotalMarksInput.value),
+        due_date: assessmentDueDateInput.value || null
+      };
+
+      if (!payload.course_id || !payload.title || !payload.category || Number.isNaN(payload.weight) || Number.isNaN(payload.total_marks)) {
+        alert("Please fill all required assessment fields.");
+        return;
+      }
+
+      let response;
+      if (editingAssessmentId) {
+        response = await fetch(`${API_ASSESSMENTS}/${editingAssessmentId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        response = await fetch(API_ASSESSMENTS, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to save assessment");
+      }
+
+      closeModal();
+      await loadAssessments();
+
+      if (payload.course_id) {
+        courseSelect.value = String(payload.course_id);
+        renderAssessments();
+      }
+    }
+
+    async function saveGrades() {
+      if (!editingAssessmentId) {
+        alert("Open an existing assessment first to save grades.");
+        return;
+      }
+
+      const inputs = gradingStudentsBody.querySelectorAll("input[data-student-id]");
+
+      if (!inputs.length) {
+        alert("No enrolled students found for this assessment.");
+        return;
+      }
+
+      try {
+        for (const input of inputs) {
+          const studentId = Number(input.getAttribute("data-student-id"));
+          const earnedMarks = Number(input.value);
+
+          if (Number.isNaN(earnedMarks)) {
+            throw new Error("Please enter valid earned marks for all listed students.");
+          }
+
+          const response = await fetch(`${API_ASSESSMENTS}/${editingAssessmentId}/grades`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              student_id: studentId,
+              earned_marks: earnedMarks,
+              status: "Completed"
+            })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to save grades");
+          }
+        }
+
+        await loadAssessmentStudents(editingAssessmentId);
+        alert("Grades saved successfully.");
+      } catch (error) {
+        console.error("Save grades error:", error);
+        alert(error.message);
+      }
+    }
+
+    async function removeAssessment(id) {
+      const response = await fetch(`${API_ASSESSMENTS}/${id}`, {
+        method: "DELETE"
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete assessment");
+      }
+
+      await loadAssessments();
+    }
+
+    openModalBtn.addEventListener("click", openModal);
+    closeModalBtn.addEventListener("click", closeModal);
+    cancelModalBtn.addEventListener("click", closeModal);
+    saveGradesBtn.addEventListener("click", saveGrades);
+  
+
+    assessmentsTableBody.addEventListener("click", async (e) => {
+      const button = e.target.closest("button[data-action]");
+      if (!button) return;
+
+      const action = button.getAttribute("data-action");
+      const id = Number(button.getAttribute("data-id"));
+      const assessment = allAssessments.find(item => Number(item.id) === id);
+
+      if (!assessment) return;
+
+      try {
+        if (action === "edit") {
+          await openEditModal(assessment);
+          return;
+        }
+
+        if (action === "delete") {
+          const confirmed = window.confirm("Are you sure you want to delete this assessment?");
+          if (!confirmed) return;
+
+          await removeAssessment(id);
+          renderAssessments();
+        }
+      } catch (error) {
+        console.error("Assessment action error:", error);
+        alert(error.message);
+      }
+    });
+
+    saveAssessmentBtn.addEventListener("click", async () => {
+      try {
+        await saveAssessment();
+      } catch (error) {
+        console.error("Save assessment error:", error);
+        alert(error.message);
+      }
+    });
+
+    courseSelect.addEventListener("change", renderAssessments);
+
+    async function initializePage() {
+      try {
+        await loadCourses();
+        await loadAssessments();
+
+        if (allCourses.length) {
+          courseSelect.value = String(allCourses[0].id);
+          modalCourseId.value = String(allCourses[0].id);
+        }
+
+        renderAssessments();
+       
+      } catch (error) {
+        console.error("Initialization error:", error);
+        assessmentsTableBody.innerHTML = `
+          <tr class="empty-row">
+            <td colspan="6">Could not load assessment data.</td>
+          </tr>
+        `;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", initializePage);
+  </script>
+</body>
+</html>

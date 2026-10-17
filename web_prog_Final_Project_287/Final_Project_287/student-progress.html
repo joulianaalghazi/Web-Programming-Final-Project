@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Course Companion — Progress</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="student-app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    .progress-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .progress-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .progress-course-code {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .progress-course-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+
+    .progress-meta {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .progress-average-block {
+      text-align: right;
+      min-width: 110px;
+    }
+
+    .progress-average-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .progress-average-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .progress-no-grade-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 12px 0 10px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #162765 0%, #3b82f6 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-note {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 34px 20px;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    .empty-state p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .summary-card {
+      margin-top: 18px;
+      max-width: 420px;
+    }
+
+    .summary-label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .summary-value {
+      margin-top: 8px;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* DARK MODE - PAGE SPECIFIC */
+body.dark-mode .progress-card,
+body.dark-mode .summary-card,
+body.dark-mode .empty-state{
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#f8fafc;
+}
+
+body.dark-mode .progress-course-name,
+body.dark-mode .progress-average-value,
+body.dark-mode .summary-value,
+body.dark-mode .empty-state h3{
+  color:#f8fafc;
+}
+
+body.dark-mode .progress-meta,
+body.dark-mode .progress-average-label,
+body.dark-mode .progress-note,
+body.dark-mode .summary-label,
+body.dark-mode .empty-state p{
+  color:#e2e8f0;
+}
+
+body.dark-mode .progress-bar-track{
+  background:#334155;
+}
+
+body.dark-mode .progress-bar-fill{
+  background:linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+}
+
+  </style>
+</head>
+<body>
+  <div id="layout" class="grid-container collapsed">
+
+    <header class="header">
+      <h1>Student Course Companion</h1>
+      <div class="header-right">
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <span class="role">Student</span>
+      </div>
+    </header>
+
+    <nav id="nav">
+      <div id="head">
+        <div id="logo"></div>
+        <i class="fa fa-bars" id="bars"></i>
+        <div id="table_nav">Table</div>
+        <i class="fa fa-times" id="times"></i>
+      </div>
+
+      <a href="student-dashboard.html"><i class="fa-solid fa-chart-simple"></i>Dashboard</a>
+      <a href="student-courses.html"><i class="fa-solid fa-book"></i>Courses</a>
+      <a href="student-progress.html"><i class="fa-solid fa-chart-line"></i>Progress</a>
+      <a href="student-profile.html"><i class="fa-solid fa-user"></i>Profile</a>
+      <a href="#" id="sign"><i class="fa-solid fa-sign-out-alt"></i>Sign Out</a>
+    </nav>
+
+    <main class="main-content">
+      <div class="page">
+        <h2 class="page-title">Progress</h2>
+        <p class="sub">Your current course averages and progress summary.</p>
+
+        <section id="progressContent"></section>
+
+        <div class="card summary-card" id="overallSummaryCard" style="display:none;">
+          <div class="summary-label">Overall Average</div>
+          <div class="summary-value" id="overallAvg">0%</div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; Student Course Companion</p>
+    </footer>
+  </div>
+
+  <script src="student-app.js"></script>
+
+  <script>
+    //DARK MODE
+const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+
+    const studentUser = JSON.parse(localStorage.getItem("studentUser") || "null");
+
+    if (!studentUser) {
+      window.location.href = "student-login.html";
+    }
+
+    const API_BASE = "http://localhost:3000";
+    const progressContent = document.getElementById("progressContent");
+    const overallSummaryCard = document.getElementById("overallSummaryCard");
+    const overallAvg = document.getElementById("overallAvg");
+
+    function formatAverage(value) {
+      return `${Math.round(Number(value || 0))}%`;
+    }
+
+    function buildCourseCard(course) {
+      const average = Number(course.average || 0);
+      const barWidth = Math.max(0, Math.min(100, average));
+      const metaParts = [];
+
+      if (course.term) metaParts.push(course.term);
+      if (course.section) metaParts.push(`Section ${course.section}`);
+
+      return `
+        <article class="progress-card">
+          <div class="progress-top">
+            <div>
+              <div class="progress-course-code">${course.course_code || ""}</div>
+              <div class="progress-course-name">${course.course_name || ""}</div>
+              <div class="progress-meta">${metaParts.join(" • ")}</div>
+            </div>
+
+            <div class="progress-average-block">
+              <div class="progress-average-label">Current Average</div>
+              ${
+                course.hasGrades
+                  ? `<div class="progress-average-value">${formatAverage(average)}</div>`
+                  : `<div class="progress-no-grade-value">No grades yet</div>`
+              }
+            </div>
+          </div>
+
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" style="width: ${course.hasGrades ? barWidth : 0}%;"></div>
+          </div>
+
+          <div class="progress-note">
+            ${
+              course.hasGrades
+                ? "Based only on graded assessments in this course."
+                : "No grades recorded yet for this course."
+            }
+          </div>
+        </article>
+      `;
+    }
+
+    function renderEmptyState() {
+      progressContent.innerHTML = `
+        <div class="card empty-state">
+          <h3>No courses added yet</h3>
+          <p>Add a course to see your progress here.</p>
+        </div>
+      `;
+      overallSummaryCard.style.display = "none";
+    }
+
+    function renderProgress(data) {
+      if (!data.courses || data.courses.length === 0) {
+        renderEmptyState();
+        return;
+      }
+
+      progressContent.innerHTML = `
+        <div class="progress-grid">
+          ${data.courses.map(buildCourseCard).join("")}
+        </div>
+      `;
+
+      overallAvg.textContent = formatAverage(data.overallAverage || 0);
+      overallSummaryCard.style.display = "block";
+    }
+
+    async function loadProgress() {
+      try {
+        const response = await fetch(`${API_BASE}/assessments/progress/${studentUser.id}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load progress");
+        }
+
+        renderProgress(data);
+      } catch (error) {
+        console.error("Progress load error:", error);
+        progressContent.innerHTML = `
+          <div class="card empty-state">
+            <h3>Could not load progress</h3>
+            <p>Please try again.</p>
+          </div>
+        `;
+        overallSummaryCard.style.display = "none";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadProgress);
+  </script>
+</body>
+</html>

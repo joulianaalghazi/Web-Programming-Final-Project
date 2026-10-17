@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Course Companion — Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="student-app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root{
+      --primary:#162765;
+      --header-bg:#1f2933;
+      --page-bg:hsl(210, 22%, 96%);
+      --card-bg:#ffffff;
+      --border:#e5e7eb;
+      --muted:#6b7280;
+      --text:#111827;
+    }
+
+    /* RESET */
+    *{
+      box-sizing:border-box;
+    }
+
+    html, body{
+      height:100%;
+    }
+
+    body{
+      margin:0;
+      font-family:"Montserrat", sans-serif;
+      background:var(--page-bg);
+      color:var(--text);
+    }
+
+    /* HEADER */
+    .header{
+      height:120px;
+      background:var(--header-bg);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 25px;
+    }
+
+    .header .brand{
+      margin:0;
+      font-size:32px;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .header .role{
+      font-size:18px;
+      font-weight:500;
+    }
+
+    /* FOOTER */
+    .footer{
+      height:50px;
+      background:var(--header-bg);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:14px;
+      text-align:center;
+    }
+
+    /* CENTER WRAPPER */
+    .shell{
+      min-height:calc(100vh - 120px - 50px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:26px;
+    }
+
+    /* OUTER TINTED WRAPPER */
+    .backdrop{
+      width:min(980px, 100%);
+      background:rgba(22, 39, 101, 0.06);
+      border:1px solid rgba(17,24,39,.08);
+      border-radius:18px;
+      padding:28px;
+    }
+
+    /* MAIN CARD */
+    .container{
+      width:100%;
+      min-height:420px;
+      display:flex;
+      overflow:hidden;
+      background:var(--card-bg);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow:0 8px 24px rgba(0,0,0,.05);
+    }
+
+    /* LEFT PANEL */
+    .left{
+      flex:1.05;
+      padding:28px 28px 24px;
+      background:#fff;
+    }
+
+    /* RIGHT PANEL */
+    .right{
+      flex:0.95;
+      padding:28px;
+      background:#f3f6fb;
+      border-left:1px solid rgba(17,24,39,.08);
+      text-align:center;
+    }
+
+    /* TAG */
+    .tag{
+      display:inline-block;
+      margin-bottom:14px;
+      padding:6px 12px;
+      border:1px solid rgba(22,39,101,.25);
+      border-radius:999px;
+      background:rgba(22,39,101,.06);
+      color:var(--primary);
+      font-size:12px;
+      font-weight:600;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+    }
+
+    /* HEADINGS */
+    .left h2{
+      margin:0;
+      font-size:28px;
+      font-weight:800;
+      color:var(--text);
+    }
+
+    .sub{
+      margin:8px 0 16px;
+      color:#4b5563;
+      font-size:14px;
+      line-height:1.4;
+    }
+
+    /* FORM */
+    label{
+      display:block;
+      margin-top:14px;
+      font-size:13px;
+      font-weight:700;
+      color:var(--text);
+    }
+
+    input{
+      width:100%;
+      margin-top:6px;
+      padding:11px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      font:inherit;
+      outline:none;
+    }
+
+    input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(22,39,101,0.15);
+    }
+
+    /* BUTTON */
+    .btn{
+      width:100%;
+      margin-top:18px;
+      padding:12px;
+      border:none;
+      border-radius:12px;
+      background:var(--primary);
+      color:#fff;
+      font:inherit;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .btn:hover{
+      filter:brightness(.97);
+    }
+
+    .btn:active{
+      transform:translateY(1px);
+    }
+
+    /* LINKS */
+    .links{
+      margin-top:14px;
+      font-size:13px;
+    }
+
+    .links a{
+      display:block;
+      margin-top:8px;
+      color:var(--primary);
+      text-decoration:none;
+    }
+
+    .links a:hover{
+      text-decoration:underline;
+    }
+
+    /* RIGHT CONTENT */
+    .right h2{
+      margin:4px 0 8px;
+      font-size:18px;
+      font-weight:800;
+      color:var(--text);
+    }
+
+    .right p{
+      margin:0;
+      color:#4b5563;
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .info-box{
+      margin-top:16px;
+      padding:16px;
+      text-align:left;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:14px;
+      box-shadow:0 1px 8px rgba(0,0,0,0.03);
+    }
+
+    .info-box h3{
+      margin:0 0 10px;
+      font-size:14px;
+      font-weight:800;
+      color:var(--text);
+    }
+
+    .small{
+      margin:6px 0;
+      color:#374151;
+      font-size:13px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width:900px){
+      .container{
+        flex-direction:column;
+      }
+
+      .right{
+        border-left:none;
+        border-top:1px solid rgba(17,24,39,.08);
+      }
+    }
+    /* DARK MODE */
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.theme-btn{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:600;
+  background:white;
+  color:#111827;
+}
+
+body.dark-mode{
+  background:#0f172a;
+  color:#f8fafc;
+}
+
+body.dark-mode .header,
+body.dark-mode .footer{
+  background:#111827;
+}
+
+body.dark-mode .backdrop{
+  background:rgba(255,255,255,0.03);
+  border:1px solid #334155;
+}
+
+body.dark-mode .container,
+body.dark-mode .left{
+  background:#1e293b;
+  border:1px solid #334155;
+}
+
+body.dark-mode .right{
+  background:#273449;
+  border-left:1px solid #334155;
+}
+
+body.dark-mode .left h2,
+body.dark-mode .right h2,
+body.dark-mode .sub,
+body.dark-mode .right p,
+body.dark-mode .small,
+body.dark-mode label,
+body.dark-mode .role{
+  color:#f8fafc;
+}
+
+body.dark-mode .sub,
+body.dark-mode .right p,
+body.dark-mode .small{
+  color:#e2e8f0;
+}
+
+body.dark-mode input{
+  background:#334155;
+  color:#ffffff;
+  border:1px solid #475569;
+}
+
+body.dark-mode input::placeholder{
+  color:#cbd5e1;
+}
+
+body.dark-mode .info-box{
+  background:#334155;
+  border:1px solid #475569;
+  color:#f8fafc;
+}
+
+body.dark-mode .tag{
+  background:#334155;
+  border:1px solid #475569;
+  color:#f8fafc;
+}
+
+body.dark-mode .links a{
+  color:#93c5fd;
+}
+
+body.dark-mode .theme-btn{
+  background:#334155;
+  color:white;
+}
+
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <h1>Student Course Companion</h1>
+    <div class="header-right">
+      <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+      <span class="role">Student</span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <div class="backdrop">
+      <div class="container">
+
+        <div class="left">
+          <span class="tag">Student Access</span>
+
+          <h2>Student Login</h2>
+          <p class="sub">Sign in to view your courses and upcoming assessments.</p>
+
+          <form class="form" id="loginForm">
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="example@school.com" required>
+
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Enter your password" required>
+
+            <button class="btn" type="submit">Login</button>
+
+            <div class="links">
+              <a href="welcome.html">Back to Welcome</a>
+              <a href="student-register.html">Create a Student Account</a>
+              <a href="#">Forgot Password?</a>
+            </div>
+          </form>
+        </div>
+
+        <div class="right">
+          <h2>Quick Info</h2>
+          <p>Use your student account to access everything in one place.</p>
+
+          <div class="info-box">
+            <h3>After login you can:</h3>
+            <p class="small">• View enrolled courses</p>
+            <p class="small">• View grades &amp; progress</p>
+            <p class="small">• Track upcoming assessments</p>
+            <p class="small">• See announcements &amp; updates</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    © Student Course Companion
+  </footer>
+
+
+<script>
+  //DARK MODE
+const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+
+  document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      const response = await fetch("http://localhost:3000/student/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      });
+
+      const data = await response.json();
+
+     if (response.ok) {
+
+  localStorage.setItem("studentUser", JSON.stringify({
+    id: data.user.id,
+    name: data.user.name,
+    email: data.user.email
+  }));
+
+  window.location.href = "student-dashboard.html";
+} else {
+  alert(data.error);
+}
+
+    } catch (error) {
+      console.log("Login error:", error);
+      alert("Server error");
+    }
+  });
+</script>
+
+
+</body>
+</html>

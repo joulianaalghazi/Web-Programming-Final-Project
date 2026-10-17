@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Course Companion — Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="student-app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+/* DARK MODE */
+body.dark-mode #studentName{
+  color:#93c5fd;
+}
+
+body.dark-mode .card h3{
+  color:#f8fafc;
+}
+
+body.dark-mode #upcomingBody td{
+  color:#e2e8f0;
+}
+  </style>
+</head>
+
+<body>
+  <div id="layout" class="grid-container collapsed">
+
+    <!-- HEADER -->
+    <header class="header">
+      <h1>Student Course Companion</h1>
+      <div class="header-right">
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <span class="role">Student</span>
+      </div>
+    </header>
+
+    <!-- NAVBAR (LEFT) -->
+    <nav id="nav">
+      <div id="head">
+        <div id="logo"></div>
+        <i class="fa fa-bars" id="bars"></i>
+        <div id="table_nav">Table</div>
+        <i class="fa fa-times" id="times"></i>
+      </div>
+
+      <a href="student-dashboard.html"><i class="fa-solid fa-chart-simple"></i>Dashboard</a>
+      <a href="student-courses.html"><i class="fa-solid fa-book"></i>Courses</a>
+      <a href="student-progress.html"><i class="fa-solid fa-chart-line"></i>Progress</a>
+      <a href="student-profile.html"><i class="fa-solid fa-user"></i>Profile</a>
+     <a href="#" id="sign"><i class="fa-solid fa-sign-out-alt"></i>Sign Out</a>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="page">
+      <h2 class="page-title">Welcome, <span id="studentName"></span></h2>
+      <br/>
+      <h2 class="page-title">Dashboard</h2>
+      <p class="sub">Overview of your courses and assessments.</p>
+
+        <!-- STATS -->
+        <div class="stats">
+
+          <div class="card">
+            <div class="stat-label">Total Courses</div>
+            <div class="stat-value" id="totalCourses">-</div>
+          </div>
+
+          <div class="card">
+            <div class="stat-label">Pending Assessments</div>
+            <div class="stat-value" id="pendingCount">-</div>
+          </div>
+
+          <div class="card">
+            <div class="stat-label">Completed Assessments</div>
+            <div class="stat-value" id="doneCount">-</div>
+          </div>
+
+        </div>
+        
+
+<script>
+//DARK MODE
+const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+
+  const studentUser = JSON.parse(localStorage.getItem("studentUser") || "null");
+
+  if (!studentUser) {
+    window.location.href = "student-login.html";
+  }
+
+  const API_BASE = "http://localhost:3000";
+
+  async function loadDashboardData() {
+    try {
+      const courseResponse = await fetch(`${API_BASE}/student/courses/${studentUser.id}`);
+      const courses = await courseResponse.json();
+
+      if (!courseResponse.ok) {
+        throw new Error(courses.error || "Failed to load courses");
+      }
+
+      document.getElementById("studentName").textContent = studentUser.name || "";
+      document.getElementById("totalCourses").textContent = courses.length;
+
+const dashboardResponse = await fetch(`${API_BASE}/assessments/dashboard/${studentUser.id}`);
+const dashboardData = await dashboardResponse.json();
+
+if (!dashboardResponse.ok) {
+  throw new Error(dashboardData.error || "Failed to load dashboard assessments");
+}
+
+document.getElementById("pendingCount").textContent = dashboardData.pendingCount;
+document.getElementById("doneCount").textContent = dashboardData.doneCount;
+
+const upcomingBody = document.getElementById("upcomingBody");
+upcomingBody.innerHTML = "";
+
+if (!dashboardData.upcomingAssessments || dashboardData.upcomingAssessments.length === 0) {
+  upcomingBody.innerHTML = `
+    <tr>
+      <td colspan="4">No upcoming pending assessments</td>
+    </tr>
+  `;
+} else {
+  dashboardData.upcomingAssessments.forEach(item => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${item.course}</td>
+      <td>${item.assessment}</td>
+      <td>${item.status}</td>
+      <td>${item.due_date ? item.due_date.split("T")[0] : "-"}</td>
+    `;
+    upcomingBody.appendChild(row);
+  });
+}
+     
+
+   } catch (error) {
+  console.error("Dashboard load error:", error);
+  document.getElementById("totalCourses").textContent = "-";
+  document.getElementById("pendingCount").textContent = "-";
+  document.getElementById("doneCount").textContent = "-";
+
+  const upcomingBody = document.getElementById("upcomingBody");
+  if (upcomingBody) {
+    upcomingBody.innerHTML = `
+      <tr>
+        <td colspan="4">Could not load assessments</td>
+      </tr>
+    `;
+  }
+}
+  }
+
+  document.addEventListener("DOMContentLoaded", loadDashboardData);
+</script>
+
+        <!-- UPCOMING -->
+        <div class="card">
+          <h3>Upcoming Assessments</h3>
+          <div class="table-wrap">
+            <table class="table cols-3">
+              <thead>
+                <tr>
+                  <th>Course</th>
+                  <th>Assessment</th>
+                  <th>Status</th>
+                  <th>Due Date</th>
+                </tr>
+              </thead>
+              <tbody id="upcomingBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <p>&copy; Student Course Companion</p>
+    </footer>
+
+  </div>
+
+  <script src="student-app.js"></script>
+</body>
+</html>

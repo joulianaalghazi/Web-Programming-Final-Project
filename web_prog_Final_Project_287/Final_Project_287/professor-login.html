@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Professor Sign In</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#162765;
+  --header-bg:#1f2933;
+  --page-bg:hsl(210, 22%, 96%);
+  --border:#e5e7eb;
+  --text:#111827;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html, body{
+  height:100%;
+}
+
+body{
+  margin:0;
+  font-family:"Montserrat", sans-serif;
+  background:var(--page-bg);
+  color:var(--text);
+}
+
+.header{
+  height:120px;
+  background:var(--header-bg);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+}
+
+.header .brand{
+  margin:0;
+  font-size:32px;
+  font-weight:800;
+}
+
+.header .role{
+  font-size:18px;
+  font-weight:500;
+}
+
+.footer{
+  height:50px;
+  background:var(--header-bg);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+}
+
+.shell{
+  min-height:calc(100vh - 120px - 50px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:26px;
+}
+
+.backdrop{
+  width:min(980px,100%);
+  background:rgba(22,39,101,0.06);
+  border:1px solid rgba(17,24,39,.08);
+  border-radius:18px;
+  padding:28px;
+}
+
+.container{
+  width:100%;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.05);
+  display:flex;
+  min-height:420px;
+}
+
+.left{
+  flex:1.05;
+  padding:28px 28px 24px;
+  background:#fff;
+}
+
+.right{
+  flex:0.95;
+  padding:28px;
+  background:#f3f6fb;
+  border-left:1px solid rgba(17,24,39,.08);
+  text-align:center;
+}
+
+@media (max-width:900px){
+  .container{
+    flex-direction:column;
+  }
+
+  .right{
+    border-left:none;
+    border-top:1px solid rgba(17,24,39,.08);
+  }
+}
+
+.tag{
+  display:inline-block;
+  padding:6px 12px;
+  border:1px solid rgba(22,39,101,.25);
+  background:rgba(22,39,101,.06);
+  color:var(--primary);
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.left h2{
+  margin:0;
+  font-size:28px;
+  font-weight:800;
+}
+
+.sub{
+  margin:8px 0 16px;
+  color:#4b5563;
+  font-size:14px;
+  line-height:1.4;
+}
+
+label{
+  display:block;
+  margin-top:14px;
+  font-size:13px;
+  font-weight:700;
+}
+
+input{
+  width:100%;
+  margin-top:6px;
+  padding:11px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+  font:inherit;
+}
+
+input:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(22,39,101,0.15);
+}
+
+.btn{
+  width:100%;
+  margin-top:18px;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:var(--primary);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.btn:hover{
+  filter:brightness(.97);
+}
+
+.btn:active{
+  transform:translateY(1px);
+}
+
+.links{
+  margin-top:14px;
+  font-size:13px;
+}
+
+.links a{
+  display:block;
+  margin-top:8px;
+  color:var(--primary);
+  text-decoration:none;
+}
+
+.links a:hover{
+  text-decoration:underline;
+}
+
+.right h2{
+  margin:4px 0 8px;
+  font-size:18px;
+  font-weight:800;
+}
+
+.right p{
+  margin:0;
+  color:#4b5563;
+  font-size:13px;
+  line-height:1.4;
+}
+
+.info-box{
+  margin-top:16px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  text-align:left;
+  box-shadow:0 1px 8px rgba(0,0,0,.03);
+}
+
+.info-box h3{
+  margin:0 0 10px;
+  font-size:14px;
+  font-weight:800;
+}
+
+.small{
+  margin:6px 0;
+  color:#374151;
+  font-size:13px;
+}
+
+.error-message{
+  margin-top:12px;
+  color:#b91c1c;
+  font-size:13px;
+  font-weight:600;
+  min-height:18px;
+}
+
+/*For the dark mode*/
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.theme-btn{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:600;
+  background:white;
+  color:#111827;
+}
+
+.theme-btn:hover{
+  opacity:0.9;
+}
+
+/* DARK MODE */
+body.dark-mode{
+  --header-bg:#111827;
+  --page-bg:#0f172a;
+  --border:#334155;
+  --text:#f8fafc;
+}
+
+body.dark-mode{
+  background:var(--page-bg);
+  color:var(--text);
+}
+
+body.dark-mode .container,
+body.dark-mode .left{
+  background:#1e293b;
+  color:#f8fafc;
+}
+
+body.dark-mode .right{
+  background:#273449;
+  color:#f8fafc;
+  border-left:1px solid #334155;
+}
+
+body.dark-mode .info-box{
+  background:#334155;
+  border:1px solid #475569;
+  color:#f8fafc;
+}
+
+body.dark-mode .sub,
+body.dark-mode .right p,
+body.dark-mode .small,
+body.dark-mode label,
+body.dark-mode .role{
+  color:#e2e8f0;
+}
+
+body.dark-mode input{
+  background:#475569;
+  color:#ffffff;
+  border:1px solid #64748b;
+}
+
+body.dark-mode input::placeholder{
+  color:#cbd5e1;
+}
+
+body.dark-mode .theme-btn{
+  background:#334155;
+  color:#ffffff;
+}
+
+body.dark-mode .backdrop{
+  background:rgba(255,255,255,0.03);
+}
+
+body.dark-mode .links a{
+  color:#93c5fd;
+}
+
+body.dark-mode .tag{
+  background:rgba(147,197,253,0.15);
+  color:#bfdbfe;
+  border:1px solid rgba(147,197,253,0.3);
+}
+
+/* DARK MODE */
+body.dark-mode{
+  background:#0f172a;
+  color:#f8fafc;
+}
+
+body.dark-mode .header,
+body.dark-mode .footer{
+  background:#111827;
+}
+
+body.dark-mode .main-content{
+  background:#0f172a;
+}
+
+body.dark-mode #nav,
+body.dark-mode #head{
+  background:#1e293b;
+}
+
+body.dark-mode #nav a{
+  color:#f8fafc;
+}
+
+body.dark-mode #nav a:hover{
+  background:#334155;
+}
+
+body.dark-mode #sign{
+  background:#334155;
+}
+
+body.dark-mode .page-title,
+body.dark-mode .muted,
+body.dark-mode .sub,
+body.dark-mode span,
+body.dark-mode th,
+body.dark-mode td{
+  color:#e2e8f0;
+}
+
+body.dark-mode .kpi,
+body.dark-mode .insight,
+body.dark-mode .panel{
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#f8fafc;
+}
+
+body.dark-mode .panel-head{
+  border-bottom:1px solid #334155;
+}
+
+body.dark-mode .table thead th{
+  background:#273449;
+}
+
+body.dark-mode .table td,
+body.dark-mode .table th{
+  border-bottom:1px solid #334155;
+}
+
+body.dark-mode .select{
+  background:#334155;
+  color:#ffffff;
+  border:1px solid #475569;
+}
+
+body.dark-mode .bar{
+  background:#334155;
+  border:1px solid #475569;
+}
+
+body.dark-mode .pill,
+body.dark-mode .tag{
+  background:#334155;
+  border:1px solid #475569;
+  color:#f8fafc;
+}
+
+body.dark-mode .theme-btn{
+  background:#334155;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+  <header class="header">
+    <h1>Student Course Companion</h1>
+    <div class="header-right">
+      <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+      <span>Instructor / Admin</span>
+    </div>
+  </header>
+
+<div class="shell">
+  <div class="backdrop">
+
+    <div class="container">
+
+      <div class="left">
+
+        <span class="tag">Professor Access</span>
+
+        <h2>Professor Sign In</h2>
+
+        <p class="sub">Sign in to manage courses, assessments, and templates.</p>
+
+        <form id="professorLoginForm">
+
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="professor@example.com" required>
+
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="Enter your password" required>
+
+          <button class="btn" type="submit">Sign In</button>
+
+          <div id="errorMessage" class="error-message"></div>
+
+          <div class="links">
+            <a href="welcome.html">Back to Welcome</a>
+            <a href="professor-register.html">Create a Professor Account</a>
+            <a href="#">Forgot Password?</a>
+          </div>
+
+        </form>
+
+      </div>
+
+      <div class="right">
+
+        <h2>Instructor Portal</h2>
+
+        <p>Use your instructor/admin account to access everything in one place.</p>
+
+        <div class="info-box">
+
+          <h3>After login you can:</h3>
+
+          <p class="small">• Manage courses</p>
+          <p class="small">• Create assessments</p>
+          <p class="small">• Use templates</p>
+          <p class="small">• View analytics</p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<footer class="footer">
+  © Student Course Companion
+</footer>
+
+<script>
+//For the dark mode
+const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+
+const API_BASE = "http://localhost:3000";
+
+const loginForm = document.getElementById("professorLoginForm");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const errorMessage = document.getElementById("errorMessage");
+
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  errorMessage.textContent = "";
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  try {
+    const response = await fetch(`${API_BASE}/professor/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      errorMessage.textContent = data.error || "Login failed";
+      return;
+    }
+
+    localStorage.setItem("professorUser", JSON.stringify(data.user));
+    window.location.href = "professor-dashboard.html";
+
+  } catch (error) {
+    console.error("Professor login error:", error);
+    errorMessage.textContent = "Server error. Please try again.";
+  }
+});
+</script>
+
+</body>
+</html>

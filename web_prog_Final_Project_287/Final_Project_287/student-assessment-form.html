@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Course Companion — Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="student-app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <div id="layout" class="grid-container collapsed">
+
+    <header class="header">
+      <h1>Student Course Companion</h1>
+      <div class="header-right">
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <span class="role">Student</span>
+      </div>
+    </header>
+
+    <nav id="nav">
+      <div id="head">
+        <div id="logo"></div>
+        <i class="fa fa-bars" id="bars"></i>
+        <div id="table_nav">Table</div>
+        <i class="fa fa-times" id="times"></i>
+      </div>
+
+      <a href="student-dashboard.html"><i class="fa-solid fa-chart-simple"></i>Dashboard</a>
+      <a href="student-courses.html"><i class="fa-solid fa-book"></i>Courses</a>
+      <a href="student-progress.html"><i class="fa-solid fa-chart-line"></i>Progress</a>
+      <a href="student-profile.html"><i class="fa-solid fa-user"></i>Profile</a>
+      <a href="#" id="sign"><i class="fa-solid fa-sign-out-alt"></i>Sign Out</a>
+    </nav>
+    <main class="main-content">
+      <div class="page">
+        <h2 class="page-title">Add / Edit Assessment</h2>
+        <p class="sub">Enter the assessment details.</p>
+
+        <div class="card" style="max-width:700px;">
+          <label class="label">
+            Title
+            <input class="input" id="assessmentTitle" type="text" placeholder="e.g., Quiz 1">
+          </label>
+
+          <label class="label">
+            Type
+            <select class="input" id="assessmentType">
+              <option>Assignment</option>
+              <option>Quiz</option>
+              <option>Lab</option>
+              <option>Project</option>
+              <option>Exam</option>
+            </select>
+          </label>
+
+          <label class="label">
+            Due date
+            <input class="input" id="assessmentDue" type="date">
+          </label>
+
+          <label class="label">
+            Earned
+            <input class="input" id="assessmentEarned" type="number" min="0" placeholder="e.g., 14">
+          </label>
+
+          <label class="label">
+            Total
+            <input class="input" id="assessmentTotal" type="number" min="0" placeholder="e.g., 15">
+          </label>
+
+          <label class="label">
+            Status
+            <select class="input" id="assessmentStatus">
+              <option>Pending</option>
+              <option>Completed</option>
+            </select>
+          </label>
+
+          <div class="actions">
+            <button class="btn ghost" type="button" onclick="history.back()">Cancel</button>
+            <button class="btn primary" type="button" id="saveAssessmentBtn">Save</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; Student Course Companion</p>
+    </footer>
+
+  </div>
+
+  <script src="student-app.js"></script>
+<script>
+//DARK MODE
+const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+
+  const studentUser = JSON.parse(localStorage.getItem("studentUser") || "null");
+
+  if (!studentUser) {
+    window.location.href = "student-login.html";
+  }
+</script>
+
+</body>
+</html>

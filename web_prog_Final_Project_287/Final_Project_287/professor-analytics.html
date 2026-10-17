@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Instructor Analytics</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family:"Montserrat", sans-serif;
+  background-color: hsl(210, 22%, 96%);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: 120px 1fr 50px;
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+  min-height: 100vh;
+  transition: grid-template-columns 0.5s;
+}
+
+.grid-container.collapsed {
+  grid-template-columns: 48px 1fr;
+}
+
+.header {
+  grid-area: header;
+  font-size: 20px;
+  background-color: #1f2933;
+  color: white;
+  padding: 0 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.header span {
+  font-size: 20px;
+  font-weight: 400;
+  opacity: 0.95;
+}
+
+.main-content {
+  grid-area: main;
+  padding: 30px;
+  background-color: hsl(210, 22%, 96%);
+}
+
+.footer {
+  grid-area: footer;
+  background-color: #1f2933;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.footer p {
+  margin: 0;
+}
+
+#nav {
+  grid-area: sidebar;
+  overflow: hidden;
+  background: #edeffb;
+  display: flex;
+  flex-direction: column;
+}
+
+#head {
+  height: 48px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  background: #edeffb;
+  overflow: hidden;
+}
+
+#nav a {
+  color: #162765;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 188px;
+  height: 40px;
+  margin: 6px;
+  border-radius: 20px;
+  font-size: 20px;
+  text-decoration: none;
+  transition: 0.4s;
+}
+
+#nav a:hover {
+  background: #4b5563;
+  color: #fff;
+}
+
+#nav a:active {
+  transform: scale(0.7);
+}
+
+#nav i {
+  width: 40px;
+  margin-right: 6px;
+  padding: 10px;
+}
+
+#table_nav {
+  font-size: 22px;
+  margin-left: 10px;
+}
+
+.grid-container.collapsed #table_nav,
+.grid-container.collapsed #logo {
+  display: none;
+}
+
+#bars, #times {
+  cursor: pointer;
+}
+
+#bars {
+  font-size: 22px;
+  padding: 14px;
+  width: 48px;
+  height: 48px;
+}
+
+#times { display: none; }
+.grid-container:not(.collapsed) #times { display: inline-block; }
+.grid-container:not(.collapsed) #bars { display: none; }
+
+#logo {
+  width:40px;
+  height:40px;
+  background:url(#);
+  background-size:cover;
+  margin-left:12px;
+  display:none;
+}
+
+#sign {
+  margin-top: auto;
+  background: #cececf;
+}
+
+#sign:hover {
+  color:#374151
+}
+
+.page-title{
+  margin:0;
+  font-size:28px;
+  font-weight:600;
+  color:#111827;
+}
+
+.sub{
+  margin:6px 0 18px;
+  color:#6b7280;
+  font-size:14px;
+}
+
+h1 {
+  margin:0;
+}
+
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.muted { color: #6b7280; }
+
+.head-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.select {
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 10px 40px 10px 14px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  color: #111827;
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+  min-width: 320px;
+}
+
+.select:hover {
+  border-color: #162765;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #162765;
+  box-shadow: 0 0 0 3px rgba(22, 39, 101, 0.15);
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0 14px;
+}
+
+@media (max-width: 1050px) {
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 650px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+}
+
+.kpi {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.kpi-label { font-size: 13px; color: #6b7280; }
+.kpi-value { font-size: 28px; font-weight: 600; margin-top: 6px; }
+.kpi-value.ok { color: #065f46; }
+.kpi-value.warn { color: #b45309; }
+.kpi-sub { margin-top: 6px; font-size: 13px; }
+
+.insight {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.insight h3 { margin: 0 0 6px; font-size: 16px; }
+.insight-left { min-width: 260px; flex: 1; }
+
+.tag {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #374151;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.panel-head h3 { margin: 0; font-size: 16px; }
+
+.rows { padding: 12px 14px; display: grid; gap: 12px; }
+
+.row-stat {
+  display: grid;
+  grid-template-columns: 1fr 2fr 70px;
+  gap: 12px;
+  align-items: center;
+}
+
+@media (max-width: 700px) {
+  .row-stat { grid-template-columns: 1fr; }
+  .row-right { text-align: left !important; }
+}
+
+.row-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bar {
+  height: 12px;
+  background: #f3f4f6;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.fill {
+  height: 100%;
+  background: #162765;
+  width: 0;
+}
+
+.fill.warn { background: #b45309; }
+
+.row-right { text-align: right; }
+
+.table-wrap { overflow-x: auto; }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+.table th, .table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  text-align: left;
+}
+
+.table thead th {
+  font-size: 12px;
+  color: #6b7280;
+  background: #f9fafb;
+}
+
+.right { text-align: right; }
+
+.pill {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  background: #f9fafb;
+}
+
+/*DARK MODE*/
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.theme-btn{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:600;
+  background:white;
+  color:#111827;
+}
+
+/* DARK MODE */
+body.dark-mode{
+  background:#0f172a;
+  color:#f8fafc;
+}
+
+body.dark-mode .header,
+body.dark-mode .footer{
+  background:#111827;
+}
+
+body.dark-mode .main-content{
+  background:#0f172a;
+}
+
+body.dark-mode #nav,
+body.dark-mode #head{
+  background:#1e293b;
+}
+
+body.dark-mode #nav a{
+  color:#f8fafc;
+}
+
+body.dark-mode #nav a:hover{
+  background:#334155;
+}
+
+body.dark-mode #sign{
+  background:#334155;
+}
+
+body.dark-mode .page-title,
+body.dark-mode .muted,
+body.dark-mode .sub,
+body.dark-mode span,
+body.dark-mode th,
+body.dark-mode td{
+  color:#e2e8f0;
+}
+
+body.dark-mode .kpi,
+body.dark-mode .insight,
+body.dark-mode .panel{
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#f8fafc;
+}
+
+body.dark-mode .panel-head{
+  border-bottom:1px solid #334155;
+}
+
+body.dark-mode .table thead th{
+  background:#273449;
+}
+
+body.dark-mode .table td,
+body.dark-mode .table th{
+  border-bottom:1px solid #334155;
+}
+
+body.dark-mode .select{
+  background:#334155;
+  color:#ffffff;
+  border:1px solid #475569;
+}
+
+body.dark-mode .bar{
+  background:#334155;
+  border:1px solid #475569;
+}
+
+body.dark-mode .pill,
+body.dark-mode .tag{
+  background:#334155;
+  border:1px solid #475569;
+  color:#f8fafc;
+}
+
+body.dark-mode .theme-btn{
+  background:#334155;
+  color:white;
+}
+  </style>
+</head>
+
+<body>
+  <div class="grid-container collapsed" id="layout">
+
+    <header class="header">
+      <h1>Student Course Companion</h1>
+      <div class="header-right">
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <span>Instructor / Admin</span>
+      </div>
+    </header>
+
+    <nav id="nav" class="sidebar">
+      <div id="head">
+        <div id="logo"></div>
+        <i class="fa fa-bars" id="bars"></i>
+        <div id="table_nav">Table</div>
+        <i class="fa fa-times" id="times"></i>
+      </div>
+
+      <a href="professor-dashboard.html"><i class="fa-solid fa-chart-simple"></i>Dashboard</a>
+      <a href="professor-courses.html"><i class="fa-solid fa-book"></i>Courses</a>
+      <a href="professor-assessments.html"><i class="fa-solid fa-file-alt"></i>Assessments</a>
+      <a href="professor-templates.html"><i class="fa-solid fa-puzzle-piece"></i>Templates</a>
+      <a href="professor-analytics.html"><i class="fa-solid fa-chart-line"></i>Analytics</a>
+      <a href="welcome.html" id="sign"><i class="fa-solid fa-sign-out-alt"></i>Sign Out</a>
+    </nav>
+
+    <main class="main-content">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Analytics</h1>
+          <p class="sub">
+            Anonymized usage statistics to monitor progress and support deadline decisions.
+          </p>
+        </div>
+
+        <div class="head-actions">
+          <select class="select" id="courseSelect">
+            <option value="">Loading courses...</option>
+          </select>
+        </div>
+      </div>
+
+      <section class="kpi-grid">
+        <article class="kpi">
+          <div class="kpi-label">Students enrolled</div>
+          <div class="kpi-value" id="kpiEnrolled">0</div>
+          <div class="kpi-sub muted">
+            Total students enrolled in this course.
+          </div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-label">Students submitted</div>
+          <div class="kpi-value" id="kpiSubmitted">0%</div>
+          <div class="kpi-sub muted">
+            Students who submitted at least one assessment activity.
+          </div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-label">Assessments completed</div>
+          <div class="kpi-value ok" id="kpiSubmissionRate">0%</div>
+          <div class="kpi-sub muted">
+            Average submission rate across all assessments.
+          </div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-label">Students behind</div>
+          <div class="kpi-value warn" id="kpiNotSubmitted">0%</div>
+          <div class="kpi-sub muted">
+           No missing after deadline passed.
+          </div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label">Total assessments</div>
+          <div class="kpi-value" id="kpiTotalAssessments">0</div>
+          <div class="kpi-sub muted">
+            Number of assessments in this course.
+          </div>
+        </article>
+
+      </section>
+
+      <section class="insight">
+        <div class="insight-left">
+          <h3>Insight</h3>
+          <p class="muted" id="insightText">
+            Select a course to view anonymized analytics insights.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h3>Submission by assessment</h3>
+          <span class="pill">No student identities shown</span>
+        </div>
+
+        <div class="rows" id="completionRows">
+          <div class="muted">No assessment analytics available yet.</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h3>Submission Progress Distribution (anonymized)</h3>
+          <span class="pill">Grouped — no names</span>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Progress group</th>
+                <th>Description</th>
+                <th class="right">Estimated % of students</th>
+              </tr>
+            </thead>
+            <tbody id="progressDistributionBody">
+              <tr>
+                <td colspan="3">No grouped progress data available yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; Student Course Companion</p>
+    </footer>
+  </div>
+
+  <script>
+    //DARK MODE
+    const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+
+    const professorUser = JSON.parse(localStorage.getItem("professorUser") || "null");
+
+    if (!professorUser) {
+      window.location.href = "professor-login.html";
+    }
+
+    const API_BASE = "http://localhost:3000/professor/dashboard";
+
+    const layout = document.getElementById("layout");
+    const bars = document.getElementById("bars");
+    const times = document.getElementById("times");
+
+    const courseSelect = document.getElementById("courseSelect");
+    const kpiEnrolled = document.getElementById("kpiEnrolled");
+    const kpiSubmitted = document.getElementById("kpiSubmitted");
+    const kpiSubmissionRate = document.getElementById("kpiSubmissionRate");
+    const kpiNotSubmitted = document.getElementById("kpiNotSubmitted");
+    const kpiTotalAssessments = document.getElementById("kpiTotalAssessments");
+    const insightText = document.getElementById("insightText");
+    const completionRows = document.getElementById("completionRows");
+    const progressDistributionBody = document.getElementById("progressDistributionBody");
+
+    bars.addEventListener("click", () => {
+      layout.classList.remove("collapsed");
+    });
+
+    times.addEventListener("click", () => {
+      layout.classList.add("collapsed");
+    });
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "No due date";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return dateString;
+      return date.toLocaleDateString();
+    }
+
+    function resetAnalytics() {
+      kpiEnrolled.textContent = "0";
+      kpiSubmitted.textContent = "0%";
+      kpiSubmissionRate.textContent = "0%";
+      kpiNotSubmitted.textContent = "0%";
+      kpiTotalAssessments.textContent = "0";
+      insightText.textContent = "Select a course to view anonymized analytics insights.";
+      completionRows.innerHTML = `<div class="muted">No assessment submission data available yet.</div>`;
+      progressDistributionBody.innerHTML = `
+        <tr>
+          <td colspan="3">No grouped progress data available yet.</td>
+        </tr>
+      `;
+    }
+
+    async function loadCourses() {
+      try {
+        const response = await fetch(`${API_BASE}/courses?created_by=${encodeURIComponent(professorUser.id)}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load analytics courses");
+        }
+
+        if (!data.length) {
+          courseSelect.innerHTML = `<option value="">No courses available</option>`;
+          resetAnalytics();
+          return;
+        }
+
+        courseSelect.innerHTML = data.map(course => `
+          <option value="${course.id}">
+            ${escapeHtml(course.code)} — ${escapeHtml(course.name)} (${escapeHtml(course.term || "")}${course.section ? ` — Section ${escapeHtml(course.section)}` : ""})
+          </option>
+        `).join("");
+
+        await loadAnalyticsForSelectedCourse();
+      } catch (error) {
+        console.error("Load analytics courses error:", error);
+        courseSelect.innerHTML = `<option value="">Could not load courses</option>`;
+        resetAnalytics();
+      }
+    }
+
+    async function loadStats(courseId) {
+      const response = await fetch(`${API_BASE}/stats/${courseId}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to load stats");
+      }
+
+      kpiEnrolled.textContent = String(data.enrolled_students || 0);
+      kpiSubmitted.textContent = `${Number(data.submitted_students_percent || 0)}%`;
+      kpiSubmissionRate.textContent = `${Number(data.submission_rate_percent || 0)}%`;
+      kpiNotSubmitted.textContent = `${Number(data.students_not_submitted_percent || 0)}%`;
+      kpiTotalAssessments.textContent = String(data.total_assessments || 0);
+    }
+
+    async function loadCompletion(courseId) {
+      const response = await fetch(`${API_BASE}/assessment-completion/${courseId}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to load assessment completion");
+      }
+
+      if (!data.length) {
+        completionRows.innerHTML = `<div class="muted">No assessments available for this course.</div>`;
+        insightText.textContent = "No assessment submission data available yet for this course.";
+        return;
+      }
+
+      completionRows.innerHTML = data.map(item => {
+        const percent = Number(item.completion_percent || 0);
+        const warnClass = percent < 60 ? "warn" : "";
+
+        return `
+          <div class="row-stat">
+            <div class="row-title">
+              <strong>${escapeHtml(item.title)}</strong>
+              <span class="muted">Due: ${escapeHtml(formatDate(item.due_date))}</span>
+            </div>
+            <div class="bar">
+              <div class="fill ${warnClass}" style="width: ${percent}%"></div>
+            </div>
+            <div class="row-right"><strong>${percent}%</strong></div>
+          </div>
+        `;
+      }).join("");
+
+      const sorted = [...data].sort((a, b) => Number(a.completion_percent || 0) - Number(b.completion_percent || 0));
+      const lowest = sorted[0];
+
+      if (lowest) {
+        insightText.textContent =
+          `${lowest.title} currently has the lowest submission rate at ${lowest.completion_percent}%. You may want to consider a reminder or deadline adjustment if appropriate.`;
+      }
+    }
+
+    async function loadProgressDistribution(courseId) {
+      const response = await fetch(`${API_BASE}/progress-distribution/${courseId}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to load progress distribution");
+      }
+
+      if (!data.length) {
+        progressDistributionBody.innerHTML = `
+          <tr>
+            <td colspan="3">No grouped progress data available yet.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      progressDistributionBody.innerHTML = data.map(item => `
+        <tr>
+          <td><strong>${escapeHtml(item.group_name)}</strong></td>
+          <td class="muted">${escapeHtml(item.description)}</td>
+          <td class="right"><strong>${Number(item.percent || 0)}%</strong></td>
+        </tr>
+      `).join("");
+    }
+
+    async function loadAnalyticsForSelectedCourse() {
+      const courseId = courseSelect.value;
+
+      if (!courseId) {
+        resetAnalytics();
+        return;
+      }
+
+      try {
+        await Promise.all([
+          loadStats(courseId),
+          loadCompletion(courseId),
+          loadProgressDistribution(courseId)
+        ]);
+      } catch (error) {
+        console.error("Load analytics error:", error);
+        resetAnalytics();
+        insightText.textContent = "Could not load analytics for the selected course.";
+      }
+    }
+
+    courseSelect.addEventListener("change", loadAnalyticsForSelectedCourse);
+
+    document.addEventListener("DOMContentLoaded", loadCourses);
+  </script>
+</body>
+</html>

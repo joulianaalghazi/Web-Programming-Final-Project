@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#162765;
+      --header-bg:#1f2933;
+      --page-bg:hsl(210, 22%, 96%);
+      --text:#111827;
+      --muted:#6b7280;
+    }
+
+    /* RESET */
+    *{
+      box-sizing:border-box;
+    }
+
+    html, body{
+      height:100%;
+    }
+
+    body{
+      margin:0;
+      font-family:"Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--page-bg);
+      color:var(--text);
+    }
+
+    /* HEADER */
+    .header{
+      height:120px;
+      background:var(--header-bg);
+      color:#fff;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:0 25px;
+    }
+
+    .header .brand{
+      margin:0;
+      font-size:32px;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .header .role{
+      font-size:18px;
+      font-weight:500;
+    }
+
+    /* MAIN WELCOME LAYOUT */
+    .shell{
+      display:flex;
+      width:100%;
+      min-height:calc(100vh - 120px - 50px);
+    }
+
+    .left,
+    .right{
+      min-height:calc(100vh - 120px - 50px);
+    }
+
+    .left{
+      width:45%;
+      background:#ffffff;
+      display:flex;
+      justify-content:center;
+      padding:25px;
+    }
+
+    .leftInner{
+      width:100%;
+      max-width:1000px;
+      display:flex;
+      align-items:flex-start;
+      padding-top:150px;
+    }
+
+    .leftContent{
+      width:100%;
+    }
+
+    .tag{
+      display:inline-block;
+      padding:6px 12px;
+      margin-bottom:18px;
+      border:1px solid rgba(22,39,101,.25);
+      border-radius:999px;
+      background-color:rgba(22,39,101,.06);
+      color:var(--primary);
+      font-size:12px;
+      font-weight:600;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    .leftContent h2{
+      margin:0;
+      font-size:44px;
+      line-height:1.1;
+      font-weight:800;
+      color:var(--text);
+    }
+
+    .sub{
+      margin-top:16px;
+      font-size:15px;
+      line-height:1.5;
+      color:#4b5563;
+    }
+
+    
+    .buttons{
+      margin-top:30px;
+      max-width:420px;
+    }
+
+    .buttons a{
+      text-decoration:none;
+    }
+
+    .buttons button{
+      display:block;
+      width:100%;
+      margin-top:14px;
+      padding:14px;
+      border:none;
+      border-radius:12px;
+      background-color:var(--primary);
+      color:#fff;
+      font-size:16px;
+      font-weight:700;
+      font-family:inherit;
+      cursor:pointer;
+    }
+
+    .buttons .secondary{
+      background-color:#374151;
+    }
+
+    .buttons button:hover{
+      filter:brightness(.97);
+    }
+
+    .buttons button:active{
+      transform:translateY(1px);
+    }
+
+    .right{
+      width:55%;
+      position:relative;
+      background-color:#ffffff;
+      background-image:url("images/student-portal.png.png");
+      background-repeat:no-repeat;
+      background-size:100%;
+      background-position:78% 85%;
+    }
+
+    .rightContent{
+      position:absolute;
+      top:30px;
+      left: 50px;
+      transform:translateX(-50%);
+      width:430px;
+      text-align:center;
+    }
+
+    .rightContent h2{
+      margin:0;
+      font-size:40px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .rightContent p{
+      margin-top:12px;
+      font-size:15px;
+      line-height:1.6;
+      font-weight:500;
+      color:#1f2933;
+    }
+
+    /* FOOTER */
+    .footer{
+      height:50px;
+      background:var(--header-bg);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-size:14px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width:900px){
+      .left{
+        width:48%;
+        padding:0 40px;
+      }
+
+      .right{
+        width:52%;
+        background-size:88%;
+        background-position:72% 84%;
+      }
+
+      .leftInner{
+        padding-top:55px;
+      }
+
+      .rightContent{
+        width:85%;
+        left:45%;
+      }
+
+      .leftContent h2{
+        font-size:38px;
+      }
+    }
+
+    @media (max-width:700px){
+      .shell{
+        flex-direction:column;
+        min-height:auto;
+      }
+
+      .left,
+      .right{
+        width:100%;
+        min-height:auto;
+      }
+
+      .left{
+        padding:0 24px;
+      }
+
+      .leftInner{
+        padding-top:40px;
+        padding-bottom:40px;
+      }
+
+      .right{
+        min-height:380px;
+        background-size:68%;
+        background-position:center 85%;
+      }
+
+      .rightContent{
+        top:35px;
+        left:50%;
+        width:88%;
+        transform:translateX(-50%);
+      }
+
+      .leftContent h2{
+        font-size:34px;
+      }
+    }
+
+    /* DARK MODE */
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.theme-btn{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:600;
+  background:white;
+  color:#111827;
+}
+
+body.dark-mode{
+  --header-bg:#111827;
+  --page-bg:#0f172a;
+  --text:#f8fafc;
+}
+
+body.dark-mode{
+  background:var(--page-bg);
+  color:var(--text);
+}
+
+body.dark-mode .header,
+body.dark-mode .footer{
+  background:#111827;
+}
+
+body.dark-mode .left{
+  background:#1e293b;
+}
+
+body.dark-mode .right{
+  background-color:#273449;
+}
+
+body.dark-mode .leftContent h2,
+body.dark-mode .rightContent h2,
+body.dark-mode .sub,
+body.dark-mode .rightContent p,
+body.dark-mode .role{
+  color:#f8fafc;
+}
+
+body.dark-mode .sub{
+  color:#e2e8f0;
+}
+
+body.dark-mode .tag{
+  background:rgba(147,197,253,0.15);
+  color:#bfdbfe;
+  border:1px solid rgba(147,197,253,0.3);
+}
+
+body.dark-mode .buttons .secondary{
+  background:#334155;
+}
+
+body.dark-mode .theme-btn{
+  background:#334155;
+  color:white;
+}
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <h1>Student Course Companion</h1>
+    <div class="header-right">
+      <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+      <span class="role">Welcome</span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <div class="left">
+      <div class="leftInner">
+        <div class="leftContent">
+          <span class="tag">Course Portal</span>
+
+          <h2>Smart Course<br>Companion</h2>
+          <p class="sub">Please select your role to continue.</p>
+
+          <div class="buttons">
+            <a href="student-login.html"><button>Continue as Student</button></a>
+            <a href="professor-login.html"><button class="secondary">Continue as Professor</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="rightContent">
+        <h2>Welcome</h2>
+        <p>
+          This portal helps students and professors manage courses,
+          assessments, and academic progress in one place.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    © Student Course Companion
+  </footer>
+  <script>
+    //DARK MODE
+const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Courses</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="student-app.css">
+
+  <style>
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    .search{
+      flex:1;
+      min-width:220px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:14px;
+    }
+
+    @media (max-width:900px){
+      .grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width:600px){
+      .top{ flex-direction:column; align-items:stretch; }
+      .grid{ grid-template-columns:1fr; }
+    }
+
+    .card-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+    }
+
+    .meta{
+      margin:6px 0 0;
+      font-size:13px;
+    }
+
+    .desc{
+      margin:12px 0;
+      font-size:14px;
+      line-height:1.35;
+    }
+
+    .card-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .empty{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:16px;
+      padding:18px;
+      color:#6b7280;
+    }
+
+    .modal-backdrop{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.35);
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:999;
+    }
+
+    .modal{
+      width:min(560px, 95vw);
+      background:#fff;
+      border-radius:16px;
+      border:1px solid #e5e7eb;
+      overflow:hidden;
+      box-shadow:0 10px 30px rgba(0,0,0,0.18);
+    }
+
+    .modal-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:14px;
+      border-bottom:1px solid #e5e7eb;
+    }
+
+    .modal-head h3{
+      margin:0;
+      font-size:18px;
+      color:#111827;
+    }
+
+    .icon-btn{
+      border:none;
+      background:transparent;
+      cursor:pointer;
+      font-size:18px;
+      padding:8px;
+    }
+
+    .form{
+      padding:14px;
+    }
+
+    .label{
+      display:grid;
+      gap:6px;
+      margin-top:10px;
+      font-size:14px;
+      color:#111827;
+    }
+
+    .input{
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      padding:10px 12px;
+      font:inherit;
+    }
+
+    .actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    /* DARK MODE */
+body.dark-mode .meta,
+body.dark-mode .desc,
+body.dark-mode .desc.muted{
+  color:#e2e8f0;
+}
+
+body.dark-mode .empty{
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#cbd5e1;
+}
+
+body.dark-mode .modal{
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#f8fafc;
+}
+
+body.dark-mode .modal-head{
+  border-bottom:1px solid #334155;
+}
+
+body.dark-mode .modal-head h3{
+  color:#f8fafc;
+}
+
+body.dark-mode .search{
+  background:#334155;
+  color:#ffffff;
+  border:1px solid #475569;
+}
+
+body.dark-mode .search::placeholder{
+  color:#cbd5e1;
+}
+
+body.dark-mode .badge.active{
+  background:#14532d;
+  color:#bbf7d0;
+  border:1px solid #22c55e;
+}
+
+body.dark-mode .badge.disabled{
+  background:#7f1d1d;
+  color:#fecaca;
+  border:1px solid #ef4444;
+}
+  </style>
+</head>
+
+<body>
+  <div class="grid-container collapsed" id="layout">
+
+    <header class="header">
+      <h1>Student Course Companion</h1>
+      <div class="header-right">
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <span class="role">Student</span>
+      </div>
+    </header>
+
+    <nav id="nav" class="sidebar">
+      <div id="head">
+        <div id="logo"></div>
+        <i class="fa fa-bars" id="bars"></i>
+        <div id="table_nav">Menu</div>
+        <i class="fa fa-times" id="times"></i>
+      </div>
+
+      <a href="student-dashboard.html"><i class="fa-solid fa-chart-simple"></i>Dashboard</a>
+      <a href="student-courses.html"><i class="fa-solid fa-book"></i>Courses</a>
+      <a href="student-progress.html"><i class="fa-solid fa-chart-line"></i>Progress</a>
+      <a href="student-profile.html"><i class="fa-solid fa-user"></i>Profile</a>
+      <a href="#" id="sign"><i class="fa-solid fa-sign-out-alt"></i>Sign Out</a>
+    </nav>
+
+    <main class="main-content">
+      <div class="page">
+
+        <header class="top">
+          <div>
+            <h1 class="page-title">My Courses</h1>
+            <p class="sub">View your enrolled courses.</p>
+          </div>
+
+          <button class="btn primary" id="addCourseBtn">+ Add Course</button>
+        </header>
+
+        <section class="toolbar">
+          <input class="search" id="courseSearch" type="search" placeholder="Search courses..." />
+          <select class="select" id="statusFilter">
+            <option value="all">All statuses</option>
+            <option value="active">Active</option>
+            <option value="disabled">Disabled</option>
+          </select>
+        </section>
+
+        <section class="grid" id="coursesGrid">
+          <div class="empty">Loading courses...</div>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; Student Course Companion</p>
+    </footer>
+
+  </div>
+
+  <div class="modal-backdrop" id="courseModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">Add Course</h3>
+        <button class="icon-btn" type="button" id="closeModal">✕</button>
+      </div>
+
+      <div class="form">
+        <label class="label">
+          Select course offering
+          <select class="input" id="courseSelect">
+            <option value="">Loading available courses...</option>
+          </select>
+        </label>
+
+        <div class="actions">
+          <button class="btn ghost" type="button" id="cancelModal">Cancel</button>
+          <button class="btn primary" type="button" id="saveCourse">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="student-app.js"></script>
+
+  <script>
+
+//DARK MODE
+const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+
+    const studentUser = JSON.parse(localStorage.getItem("studentUser") || "null");
+
+    if (!studentUser) {
+      window.location.href = "student-login.html";
+    }
+
+    const API_BASE = "http://localhost:3000";
+    let allCourses = [];
+    let availableCourses = [];
+    let editingCourseId = null;
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function courseMatchesFilters(course, q, status) {
+      const text = `${course.code || ""} ${course.name || ""} ${course.instructor_name || ""} ${course.term || ""} ${course.section || ""}`.toLowerCase();
+      const qOk = !q || text.includes(q.toLowerCase());
+
+      const s = String(course.status || "Active").toLowerCase();
+      const statusOk =
+        status === "all" ||
+        (status === "active" && s === "active") ||
+        (status === "disabled" && s === "disabled");
+
+      return qOk && statusOk;
+    }
+
+    function badgeFor(status) {
+      const s = String(status || "Active").toLowerCase();
+      if (s === "disabled") return `<span class="badge disabled">Disabled</span>`;
+      return `<span class="badge active">Active</span>`;
+    }
+
+    function renderCourseCard(course) {
+      const desc = course.description && course.description.trim()
+        ? `<p class="desc">${escapeHtml(course.description)}</p>`
+        : `<p class="desc muted">No description.</p>`;
+
+      const metaBits = [];
+        if (course.term) metaBits.push(course.term);
+        if (course.section) metaBits.push("Section " + course.section);
+        if (course.instructor_name) metaBits.push("Instructor: " + course.instructor_name);
+      const meta = metaBits.join(" · ");
+
+      return `
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h3>${escapeHtml(course.code)} — ${escapeHtml(course.name)}</h3>
+              ${meta ? `<p class="meta">${escapeHtml(meta)}</p>` : `<p class="meta">&nbsp;</p>`}
+            </div>
+            ${badgeFor(course.status)}
+          </div>
+
+          ${desc}
+
+          <div class="card-actions">
+            <button class="btn small" data-action="open" data-id="${course.id}">Open</button>
+            <button class="btn small" data-action="edit" data-id="${course.id}">Edit</button>
+            <button class="btn small danger" data-action="delete" data-id="${course.id}">Delete</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function refreshCourses() {
+      const grid = document.getElementById("coursesGrid");
+      const search = document.getElementById("courseSearch");
+      const filter = document.getElementById("statusFilter");
+
+      const q = search ? search.value.trim() : "";
+      const s = filter ? filter.value : "all";
+
+      const shown = allCourses.filter(c => courseMatchesFilters(c, q, s));
+
+      if (!shown.length) {
+        grid.innerHTML = `<div class="empty">No enrolled courses found.</div>`;
+        return;
+      }
+
+      grid.innerHTML = shown.map(renderCourseCard).join("");
+    }
+
+    async function loadStudentCourses() {
+      const grid = document.getElementById("coursesGrid");
+
+      try {
+        const response = await fetch(`${API_BASE}/student/courses/${studentUser.id}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load courses");
+        }
+
+        allCourses = data;
+        refreshCourses();
+      } catch (error) {
+        console.error("Load student courses error:", error);
+        grid.innerHTML = `<div class="empty">Could not load your courses.</div>`;
+      }
+    }
+
+    async function loadAvailableCourses(selectedCurrentId = null) {
+      const select = document.getElementById("courseSelect");
+
+      try {
+        const response = await fetch(`${API_BASE}/courses`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load available courses");
+        }
+
+        const enrolledIds = new Set(allCourses.map(course => Number(course.id)));
+        if (selectedCurrentId) {
+          enrolledIds.delete(Number(selectedCurrentId));
+        }
+
+        availableCourses = data.filter(course => !enrolledIds.has(Number(course.id)));
+
+        if (!availableCourses.length) {
+          select.innerHTML = `<option value="">No more courses available</option>`;
+          return;
+        }
+
+        select.innerHTML = availableCourses.map(course => `
+          <option value="${course.id}">
+            ${escapeHtml(course.code)} — ${escapeHtml(course.name)} — ${escapeHtml(course.instructor_name || "")} — ${escapeHtml(course.term || "")}${course.section ? ` — Section ${escapeHtml(course.section)}` : ""}
+          </option>
+        `).join("");
+
+        if (selectedCurrentId) {
+          select.value = String(selectedCurrentId);
+        }
+      } catch (error) {
+        console.error("Load available courses error:", error);
+        select.innerHTML = `<option value="">Could not load courses</option>`;
+      }
+    }
+
+    function openAddModal() {
+      editingCourseId = null;
+      document.getElementById("modalTitle").textContent = "Add Course";
+      document.getElementById("saveCourse").textContent = "Add";
+      document.getElementById("courseModal").style.display = "flex";
+      loadAvailableCourses();
+    }
+
+    function openEditModal(courseId) {
+      editingCourseId = Number(courseId);
+      document.getElementById("modalTitle").textContent = "Edit Course";
+      document.getElementById("saveCourse").textContent = "Save";
+      document.getElementById("courseModal").style.display = "flex";
+      loadAvailableCourses(courseId);
+    }
+
+    function closeModal() {
+      document.getElementById("courseModal").style.display = "none";
+      editingCourseId = null;
+    }
+
+    async function enrollCourse() {
+      const select = document.getElementById("courseSelect");
+      const courseId = select.value;
+
+      if (!courseId) {
+        alert("Please select a course.");
+        return;
+      }
+
+      try {
+        if (editingCourseId) {
+          await fetch(`${API_BASE}/student/courses/${studentUser.id}/${editingCourseId}`, {
+            method: "DELETE"
+          });
+        }
+
+        const response = await fetch(`${API_BASE}/student/courses`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            student_id: studentUser.id,
+            course_id: Number(courseId)
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Enrollment failed");
+        }
+
+        closeModal();
+        await loadStudentCourses();
+      } catch (error) {
+        console.error("Enroll course error:", error);
+        alert(error.message || "Could not save course");
+      }
+    }
+
+    async function deleteEnrolledCourse(courseId) {
+      try {
+        const response = await fetch(`${API_BASE}/student/courses/${studentUser.id}/${courseId}`, {
+          method: "DELETE"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Delete failed");
+        }
+
+        await loadStudentCourses();
+      } catch (error) {
+        console.error("Delete enrolled course error:", error);
+        alert(error.message || "Could not delete course");
+      }
+    }
+
+    function initCoursesPage() {
+      const grid = document.getElementById("coursesGrid");
+      const search = document.getElementById("courseSearch");
+      const filter = document.getElementById("statusFilter");
+      const addCourseBtn = document.getElementById("addCourseBtn");
+
+      document.getElementById("closeModal").addEventListener("click", closeModal);
+      document.getElementById("cancelModal").addEventListener("click", closeModal);
+      document.getElementById("saveCourse").addEventListener("click", enrollCourse);
+      addCourseBtn.addEventListener("click", openAddModal);
+
+      if (search) search.addEventListener("input", refreshCourses);
+      if (filter) filter.addEventListener("change", refreshCourses);
+
+      grid.addEventListener("click", async (e) => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+
+        const action = btn.getAttribute("data-action");
+        const id = btn.getAttribute("data-id");
+
+        if (action === "open") {
+          window.location.href = `student-course-details.html?id=${encodeURIComponent(id)}`;
+          return;
+        }
+
+        if (action === "edit") {
+          openEditModal(id);
+          return;
+        }
+
+        if (action === "delete") {
+          const confirmed = window.confirm("Are you sure you want to remove this course?");
+          if (!confirmed) return;
+
+          await deleteEnrolledCourse(id);
+        }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      initCoursesPage();
+      await loadStudentCourses();
+    });
+  </script>
+</body>
+</html>

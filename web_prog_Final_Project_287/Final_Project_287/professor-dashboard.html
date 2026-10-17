@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Instructor Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family:"Montserrat", sans-serif;
+      background-color: hsl(210, 22%, 96%);
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      grid-template-rows: 120px 1fr 50px;
+      grid-template-areas:
+        "header header"
+        "sidebar main"
+        "footer footer";
+      min-height: 100vh;
+      transition: grid-template-columns 0.5s;
+    }
+
+    .grid-container.collapsed {
+      grid-template-columns: 48px 1fr;
+    }
+
+    .header {
+      grid-area: header;
+      font-size: 20px;
+      background-color: #1f2933;
+      color: white;
+      padding: 0 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1{
+      margin: 0;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .header .role{
+      font-size: 20px;
+      font-weight: 400;
+      opacity: 0.95;
+    }
+
+    .main-content {
+      grid-area: main;
+      padding: 30px;
+      background-color: hsl(210, 22%, 96%);
+    }
+
+    .footer {
+      grid-area: footer;
+      background-color: #1f2933;
+      color: white;
+      text-align: center;
+      padding: 12px;
+      font-size: 14px;
+    }
+
+    .footer p{
+      margin: 0;
+    }
+
+    #nav {
+      grid-area: sidebar;
+      overflow: hidden;
+      background: #edeffb;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #head {
+      height: 48px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      font-size: 20px;
+      background: #edeffb;
+      overflow: hidden;
+    }
+
+    #nav a {
+      color: #162765;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 188px;
+      height: 40px;
+      margin: 6px;
+      border-radius: 20px;
+      font-size: 20px;
+      text-decoration: none;
+      transition: 0.4s;
+    }
+
+    #nav a:hover {
+      background: #4b5563;
+      color: #fff;
+    }
+
+    #nav a:active {
+      transform: scale(0.7);
+    }
+
+    #nav i {
+      width: 40px;
+      margin-right: 6px;
+      padding: 10px;
+    }
+
+    #table_nav {
+      font-size: 22px;
+      margin-left: 10px;
+    }
+
+    .grid-container.collapsed #table_nav,
+    .grid-container.collapsed #logo {
+      display: none;
+    }
+
+    #bars, #times {
+      cursor: pointer;
+    }
+
+    #bars {
+      font-size: 22px;
+      padding: 14px;
+      width: 48px;
+      height: 48px;
+    }
+
+    #times { display: none; }
+    .grid-container:not(.collapsed) #times { display: inline-block; }
+    .grid-container:not(.collapsed) #bars { display: none; }
+
+    #logo {
+      width:40px;
+      height:40px;
+      background:url(#);
+      background-size:cover;
+      margin-left:12px;
+      display:none;
+    }
+
+    #sign {
+      margin-top: auto;
+      background: #cececf;
+    }
+
+    #sign:hover {
+      color:#374151
+    }
+
+    .page-title{
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .welcome-text{
+      margin: 6px 0 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .sub{
+      margin: 6px 0 18px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .top-head{
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .section-title{
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .section-sub{
+      margin: 0 0 14px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0 14px;
+    }
+
+    @media (max-width: 1000px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 650px) {
+      .stats { grid-template-columns: 1fr; }
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .stat-value {
+      margin-top: 6px;
+      font-size: 26px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .actions-grid {
+      padding: 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 650px) {
+      .actions-grid { grid-template-columns: 1fr; }
+    }
+
+    .action-link {
+      display: block;
+      text-decoration: none;
+      color: #162765;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 12px;
+      font-weight: 600;
+    }
+
+    .action-link:hover {
+      border-color: #162765;
+      background: #f9fafb;
+    }
+
+    .simple-list {
+      padding: 10px 14px 14px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+    }
+
+    .simple-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .simple-row:last-child { border-bottom: none; }
+
+    .small { font-size: 13px; color: #6b7280; }
+    .right { text-align: right; }
+
+    .select {
+      background-color: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 10px 38px 10px 14px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 14px;
+      color: #111827;
+      cursor: pointer;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .select:hover {
+      border-color: #162765;
+    }
+
+    .select:focus {
+      outline: none;
+      border-color: #162765;
+      box-shadow: 0 0 0 3px rgba(22, 39, 101, 0.15);
+    }
+
+    .empty-message {
+      color: #6b7280;
+      padding: 8px 0;
+    }
+
+    /* DARK MODE */
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.theme-btn{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:600;
+  background:white;
+  color:#111827;
+}
+
+body.dark-mode{
+  background:#0f172a;
+  color:#f8fafc;
+}
+
+body.dark-mode .header,
+body.dark-mode .footer{
+  background:#111827;
+}
+
+body.dark-mode .main-content{
+  background:#0f172a;
+}
+
+body.dark-mode #nav,
+body.dark-mode #head{
+  background:#1e293b;
+}
+
+body.dark-mode #nav a{
+  color:#f8fafc;
+}
+
+body.dark-mode #nav a:hover{
+  background:#334155;
+}
+
+body.dark-mode #sign{
+  background:#334155;
+}
+
+body.dark-mode .page-title,
+body.dark-mode .welcome-text,
+body.dark-mode .section-title,
+body.dark-mode .sub,
+body.dark-mode .section-sub,
+body.dark-mode .small,
+body.dark-mode span{
+  color:#e2e8f0;
+}
+
+body.dark-mode .stat-card,
+body.dark-mode .simple-list,
+body.dark-mode .action-link{
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#f8fafc;
+}
+
+body.dark-mode .stat-value,
+body.dark-mode .stat-label{
+  color:#f8fafc;
+}
+
+body.dark-mode .simple-row{
+  border-bottom:1px solid #334155;
+}
+
+body.dark-mode .action-link:hover{
+  background:#334155;
+  border-color:#475569;
+}
+
+body.dark-mode .select{
+  background:#334155;
+  color:#ffffff;
+  border:1px solid #475569;
+}
+
+body.dark-mode .theme-btn{
+  background:#334155;
+  color:white;
+}
+
+body.dark-mode .empty-message{
+  color:#cbd5e1;
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="grid-container collapsed" id="layout">
+
+    <header class="header">
+      <h1>Student Course Companion</h1>
+      <div class="header-right">
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <span>Instructor / Admin</span>
+      </div>
+    </header>
+
+    <nav id="nav">
+      <div id="head">
+        <div id="logo"></div>
+        <i class="fa fa-bars" id="bars"></i>
+        <div id="table_nav">Menu</div>
+        <i class="fa fa-times" id="times"></i>
+      </div>
+
+      <a href="professor-dashboard.html"><i class="fa-solid fa-chart-simple"></i>Dashboard</a>
+      <a href="professor-courses.html"><i class="fa-solid fa-book"></i>Courses</a>
+      <a href="professor-assessments.html"><i class="fa-solid fa-file-alt"></i>Assessments</a>
+      <a href="professor-templates.html"><i class="fa-solid fa-puzzle-piece"></i>Templates</a>
+      <a href="professor-analytics.html"><i class="fa-solid fa-chart-line"></i>Analytics</a>
+      <a href="welcome.html" id="sign"><i class="fa-solid fa-sign-out-alt"></i>Sign Out</a>
+    </nav>
+
+    <main class="main-content">
+      <div class="top-head">
+        <div>
+          <h1 class="page-title">Dashboard</h1>
+          <h2 class="welcome-text">Welcome back Professor!</h2>
+          <p class="sub">Quick overview.</p>
+        </div>
+
+        <div class="head-actions">
+          <select class="select" id="courseSelect">
+            <option value="">Loading courses...</option>
+          </select>
+        </div>
+      </div>
+
+      <section class="stats">
+        <article class="stat-card">
+          <div class="stat-label">Active students</div>
+          <div class="stat-value" id="activeStudentsValue">0%</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-label">Completion rate</div>
+          <div class="stat-value" id="completionRateValue">0%</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-label">Students behind</div>
+          <div class="stat-value" id="studentsBehindValue">0%</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-label">Next deadline</div>
+          <div class="stat-value" id="nextDeadlineValue">—</div>
+        </article>
+      </section>
+
+      <section>
+        <div>
+          <h3 class="section-title">Quick actions</h3>
+          <p class="section-sub">Navigate</p>
+        </div>
+
+        <div class="actions-grid">
+          <a class="action-link" href="professor-courses.html">Manage courses</a>
+          <a class="action-link" href="professor-assessments.html">Assessment weights</a>
+          <a class="action-link" href="professor-templates.html">Course templates</a>
+          <a class="action-link" href="professor-analytics.html">View analytics</a>
+        </div>
+      </section>
+
+      <section>
+        <div>
+          <h3 class="section-title">Upcoming deadlines</h3>
+        </div>
+
+        <div class="simple-list" id="deadlinesList">
+          <div class="empty-message">Loading deadlines...</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; Student Course Companion</p>
+    </footer>
+  </div>
+
+  <script>
+//DARK MODE
+const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+    const API_DASHBOARD = "http://localhost:3000/professor/dashboard";
+
+    const layout = document.getElementById("layout");
+    const bars = document.getElementById("bars");
+    const times = document.getElementById("times");
+
+    const courseSelect = document.getElementById("courseSelect");
+    const activeStudentsValue = document.getElementById("activeStudentsValue");
+    const completionRateValue = document.getElementById("completionRateValue");
+    const studentsBehindValue = document.getElementById("studentsBehindValue");
+    const nextDeadlineValue = document.getElementById("nextDeadlineValue");
+    const deadlinesList = document.getElementById("deadlinesList");
+
+    let allCourses = [];
+
+    bars.addEventListener("click", () => {
+      layout.classList.remove("collapsed");
+    });
+
+    times.addEventListener("click", () => {
+      layout.classList.add("collapsed");
+    });
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatDeadline(dateString) {
+      if (!dateString) return "—";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return dateString;
+      return date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric"
+      });
+    }
+
+        async function loadCourses() {
+  const professorUser = JSON.parse(localStorage.getItem("professorUser") || "null");
+
+  if (!professorUser) {
+    window.location.href = "professor-login.html";
+    return;
+  }
+
+  const response = await fetch(
+    `${API_DASHBOARD}/courses?created_by=${professorUser.id}`
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Failed to load dashboard courses");
+  }
+
+  allCourses = data;
+
+  if (!allCourses.length) {
+    courseSelect.innerHTML = '<option value="">No courses available</option>';
+    return;
+  }
+
+  courseSelect.innerHTML = allCourses.map(course => `
+    <option value="${course.id}">
+      ${escapeHtml(course.code)} — ${escapeHtml(course.name)} (${escapeHtml(course.term || "")})${course.section ? ` — Section ${escapeHtml(course.section)}` : ""}
+    </option>
+  `).join("");
+}
+
+    async function loadStats(courseId) {
+      const response = await fetch(`${API_DASHBOARD}/stats/${courseId}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to load dashboard stats");
+      }
+
+      activeStudentsValue.textContent = `${data.active_students_percent || 0}%`;
+      completionRateValue.textContent = `${data.completion_rate_percent || 0}%`;
+      studentsBehindValue.textContent = `${data.students_behind_percent || 0}%`;
+      nextDeadlineValue.textContent = formatDeadline(data.next_deadline);
+    }
+
+    async function loadDeadlines(courseId) {
+      const response = await fetch(`${API_DASHBOARD}/deadlines/${courseId}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to load deadlines");
+      }
+
+      if (!data.length) {
+        deadlinesList.innerHTML = '<div class="empty-message">No upcoming deadlines for this course.</div>';
+        return;
+      }
+
+      deadlinesList.innerHTML = data.map(item => `
+        <div class="simple-row">
+          <div>
+            <strong>${escapeHtml(item.title)}</strong>
+            <div class="small">${escapeHtml(item.code)}</div>
+          </div>
+          <div class="right">
+            <strong>${formatDeadline(item.due_date)}</strong>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function loadDashboardForSelectedCourse() {
+      const courseId = courseSelect.value;
+
+      if (!courseId) {
+        activeStudentsValue.textContent = "0%";
+        completionRateValue.textContent = "0%";
+        studentsBehindValue.textContent = "0%";
+        nextDeadlineValue.textContent = "—";
+        deadlinesList.innerHTML = '<div class="empty-message">No upcoming deadlines for this course.</div>';
+        return;
+      }
+
+      await loadStats(courseId);
+      await loadDeadlines(courseId);
+    }
+
+    courseSelect.addEventListener("change", async () => {
+      try {
+        await loadDashboardForSelectedCourse();
+      } catch (error) {
+        console.error("Dashboard course change error:", error);
+      }
+    });
+
+    async function initializeDashboard() {
+      try {
+        await loadCourses();
+
+        if (allCourses.length) {
+          courseSelect.value = String(allCourses[0].id);
+          await loadDashboardForSelectedCourse();
+        } else {
+          deadlinesList.innerHTML = '<div class="empty-message">No courses available yet.</div>';
+        }
+      } catch (error) {
+        console.error("Dashboard initialization error:", error);
+        deadlinesList.innerHTML = '<div class="empty-message">Could not load dashboard data.</div>';
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", initializeDashboard);
+  </script>
+</body>
+</html>

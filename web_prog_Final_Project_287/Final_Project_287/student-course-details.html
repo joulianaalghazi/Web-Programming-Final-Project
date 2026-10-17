@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Course Companion — Course Details</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="student-app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <div id="layout" class="grid-container collapsed">
+
+    <header class="header">
+      <h1>Student Course Companion</h1>
+      <div class="header-right">
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <span class="role">Student</span>
+      </div>
+    </header>
+
+    <nav id="nav">
+      <div id="head">
+        <div id="logo"></div>
+        <i class="fa fa-bars" id="bars"></i>
+        <div id="table_nav">Table</div>
+        <i class="fa fa-times" id="times"></i>
+      </div>
+
+      <a href="student-dashboard.html"><i class="fa-solid fa-chart-simple"></i>Dashboard</a>
+      <a href="student-courses.html"><i class="fa-solid fa-book"></i>Courses</a>
+      <a href="student-progress.html"><i class="fa-solid fa-chart-line"></i>Progress</a>
+      <a href="student-profile.html"><i class="fa-solid fa-user"></i>Profile</a>
+      <a href="#" id="sign"><i class="fa-solid fa-sign-out-alt"></i>Sign Out</a>
+    </nav>
+
+    <main class="main-content">
+      <div class="page">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;">
+          <div>
+            <h2 class="page-title" id="courseTitle">Course</h2>
+            <p class="sub">Your assessments for this course.</p>
+          </div>
+        </div>
+
+        <div class="card section-gap">
+  <h3 style="margin:0 0 12px; font-size:16px;">Grading Breakdown</h3>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th class="right">Weight</th>
+        </tr>
+      </thead>
+      <tbody id="gradingBreakdownBody">
+        <tr>
+          <td colspan="2">No grading template available for this course.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Assessment</th>
+                  <th>Type</th>
+                  <th>Due</th>
+                  <th>Earned</th>
+                  <th>Total</th>
+                  <th>Submission</th>
+                  <th>Grade Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="assessmentsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    
+
+
+    <footer class="footer">
+      <p>&copy; Student Course Companion</p>
+    </footer>
+
+  </div>
+
+  <script>
+
+//DARK MODE
+const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+
+    const studentUser = JSON.parse(localStorage.getItem("studentUser") || "null");
+
+    if (!studentUser) {
+      window.location.href = "student-login.html";
+    }
+
+    const API_BASE = "http://localhost:3000";
+    const params = new URLSearchParams(window.location.search);
+    const courseId = params.get("id");
+
+    function initNavToggle() {
+      const layout = document.getElementById("layout");
+      const bars = document.getElementById("bars");
+      const times = document.getElementById("times");
+
+      bars.addEventListener("click", () => layout.classList.remove("collapsed"));
+      times.addEventListener("click", () => layout.classList.add("collapsed"));
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getTemplateForCourse(course) {
+  const selectedTemplate = course.template_name || course.template || "";
+
+  if (!selectedTemplate) return null;
+
+  const defaultTemplates = [
+    {
+      title: "Weekly Modules (12 weeks)",
+      gradeDistribution: [
+        { category: "Quizzes", weight: "15%" },
+        { category: "Labs", weight: "25%" },
+        { category: "Participation", weight: "10%" },
+        { category: "Midterm", weight: "20%" },
+        { category: "Final", weight: "30%" }
+      ]
+    },
+    {
+      title: "Project-Based Course",
+      gradeDistribution: [
+        { category: "Proposal", weight: "10%" },
+        { category: "Prototype", weight: "15%" },
+        { category: "Mid demo", weight: "20%" },
+        { category: "Peer eval", weight: "10%" },
+        { category: "Final delivery", weight: "45%" }
+      ]
+    },
+    {
+      title: "Exam-Heavy Structure",
+      gradeDistribution: [
+        { category: "Practice sets", weight: "20%" },
+        { category: "Midterm", weight: "25%" },
+        { category: "Participation", weight: "5%" },
+        { category: "Final", weight: "50%" }
+      ]
+    }
+  ];
+
+  const customTemplates =
+    JSON.parse(localStorage.getItem("professor_custom_templates_v1")) || [];
+
+  const allTemplates = [...defaultTemplates, ...customTemplates];
+
+  return allTemplates.find(template => String(template.title) === String(selectedTemplate)) || null;
+}
+
+
+    function renderGradingBreakdown(course) {
+  const body = document.getElementById("gradingBreakdownBody");
+  if (!body) return;
+
+  const template = getTemplateForCourse(course);
+
+  if (!template || !template.gradeDistribution || !template.gradeDistribution.length) {
+    body.innerHTML = `
+      <tr>
+        <td colspan="2">No grading template available for this course.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  body.innerHTML = template.gradeDistribution.map(item => `
+    <tr>
+      <td>${escapeHtml(item.category)}</td>
+      <td class="right">${escapeHtml(item.weight)}</td>
+    </tr>
+  `).join("");
+}
+
+      async function submitAssessment(assessmentId) {
+  try {
+    const response = await fetch(`${API_BASE}/assessments/${assessmentId}/submit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        student_id: studentUser.id
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Could not submit assessment");
+    }
+
+    await loadCourseDetails();
+  } catch (error) {
+    console.error("Submit assessment error:", error);
+    alert(error.message);
+  }
+}
+
+    async function loadCourseDetails() {
+      try {
+        const courseResponse = await fetch(`${API_BASE}/student/courses/${studentUser.id}`);
+        const courseData = await courseResponse.json();
+
+        if (!courseResponse.ok) {
+          throw new Error(courseData.error || "Failed to load student courses");
+        }
+
+        const course = courseData.find(c => String(c.id) === String(courseId));
+
+        if (!course) {
+          document.getElementById("courseTitle").textContent = "Course not found";
+          document.getElementById("assessmentsBody").innerHTML =
+            `<tr><td colspan="8">You are not enrolled in this course.</td></tr>`;
+          return;
+        }
+
+        document.getElementById("courseTitle").textContent = `${course.code} — ${course.name} — ${course.instructor_name || ""}`;
+        renderGradingBreakdown(course);
+
+        const assessmentResponse = await fetch(
+          `${API_BASE}/assessments/${studentUser.id}/${courseId}`
+        );
+        const assessments = await assessmentResponse.json();
+
+        if (!assessmentResponse.ok) {
+          throw new Error(assessments.error || "Failed to load assessments");
+        }
+
+        const body = document.getElementById("assessmentsBody");
+
+        if (!assessments.length) {
+          body.innerHTML = `<tr><td colspan="8">No assessments found for this course.</td></tr>`;
+          return;
+        }
+
+        body.innerHTML = assessments.map(a => {
+  const submissionStatus = a.submission_status || "Not Submitted";
+  const alreadySubmitted = submissionStatus === "Submitted" || submissionStatus === "Late";
+
+  return `
+    <tr>
+      <td>${escapeHtml(a.title)}</td>
+      <td>${escapeHtml(a.category)}</td>
+      <td>${a.due_date ? escapeHtml(a.due_date) : "—"}</td>
+      <td>${a.earned_marks ?? 0}</td>
+      <td>${a.total_marks ?? 0}</td>
+      <td>${escapeHtml(submissionStatus)}</td>
+      <td>${escapeHtml(a.status || "Pending")}</td>
+      <td>
+        ${
+          alreadySubmitted
+            ? `<span class="muted">Submitted</span>`
+            : `<button class="btn small" data-action="submit" data-id="${a.id}">Submit</button>`
+        }
+            </td>
+          </tr>
+        `;
+      }).join("");
+      } catch (error) {
+        console.error("Course details load error:", error);
+        document.getElementById("assessmentsBody").innerHTML =
+          `<tr><td colspan="8">Could not load course details.</td></tr>`;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+  initNavToggle();
+  loadCourseDetails();
+
+  document.getElementById("assessmentsBody").addEventListener("click", async (e) => {
+    const button = e.target.closest("button[data-action='submit']");
+    if (!button) return;
+
+    const assessmentId = button.getAttribute("data-id");
+    if (!assessmentId) return;
+
+    await submitAssessment(assessmentId);
+  });
+});
+  </script>
+</body>
+</html>

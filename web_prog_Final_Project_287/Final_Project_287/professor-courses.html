@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Instructor Courses</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="student-app.css">
+
+  <style>
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .search, .select {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
+      background: #fff;
+    }
+
+    .search {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .select {
+      min-width: 160px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 600px) {
+      .top { flex-direction: column; align-items: stretch; }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #111827;
+    }
+
+    .meta {
+      margin: 6px 0 0;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .desc {
+      margin: 12px 0;
+      color: #374151;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .desc.muted {
+      color: #9ca3af;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 20px;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    .modal {
+      border: none;
+      border-radius: 16px;
+      padding: 0;
+      width: min(620px, 92vw);
+    }
+
+    .modal::backdrop {
+      background: rgba(0,0,0,0.35);
+    }
+
+    .form {
+      padding: 16px;
+      background: #fff;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 18px;
+      color: #111827;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 14px;
+      color: #111827;
+    }
+
+    input, textarea, select {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .row { grid-template-columns: 1fr; }
+    }
+
+    .loading {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #6b7280;
+      padding: 20px;
+    }
+
+    /* DARK MODE */
+body.dark-mode{
+  background:#0f172a;
+  color:#f8fafc;
+}
+
+body.dark-mode .header,
+body.dark-mode .footer{
+  background:#111827;
+}
+
+body.dark-mode .main-content{
+  background:#0f172a;
+}
+
+body.dark-mode #nav,
+body.dark-mode #head{
+  background:#1e293b;
+}
+
+body.dark-mode #nav a{
+  color:#f8fafc;
+}
+
+body.dark-mode #nav a:hover{
+  background:#334155;
+}
+
+body.dark-mode #sign{
+  background:#334155;
+}
+
+body.dark-mode .page-title,
+body.dark-mode .sub,
+body.dark-mode .meta,
+body.dark-mode label,
+body.dark-mode span{
+  color:#e2e8f0;
+}
+
+body.dark-mode .card,
+body.dark-mode .empty,
+body.dark-mode .modal,
+body.dark-mode .form{
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#f8fafc;
+}
+
+body.dark-mode .card h3,
+body.dark-mode .modal-head h2{
+  color:#f8fafc;
+}
+
+body.dark-mode .desc{
+  color:#cbd5e1;
+}
+
+body.dark-mode .desc.muted,
+body.dark-mode .loading{
+  color:#94a3b8;
+}
+
+body.dark-mode .search,
+body.dark-mode .select,
+body.dark-mode input,
+body.dark-mode textarea{
+  background:#334155;
+  color:#ffffff;
+  border:1px solid #475569;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder{
+  color:#cbd5e1;
+}
+
+body.dark-mode .theme-btn{
+  background:#334155;
+  color:white;
+}
+
+body.dark-mode .modal::backdrop{
+  background:rgba(0,0,0,0.55);
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="grid-container collapsed" id="layout">
+
+    <header class="header">
+      <h1>Student Course Companion</h1>
+      <div class="header-right">
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <span>Instructor / Admin</span>
+      </div>
+    </header>
+
+    <nav id="nav">
+      <div id="head">
+        <div id="logo"></div>
+        <i class="fa fa-bars" id="bars"></i>
+        <div id="table_nav">Table</div>
+        <i class="fa fa-times" id="times"></i>
+      </div>
+
+      <a href="professor-dashboard.html"><i class="fa-solid fa-chart-simple"></i>Dashboard</a>
+      <a href="professor-courses.html"><i class="fa-solid fa-book"></i>Courses</a>
+      <a href="professor-assessments.html"><i class="fa-solid fa-file-alt"></i>Assessments</a>
+      <a href="professor-templates.html"><i class="fa-solid fa-puzzle-piece"></i>Templates</a>
+      <a href="professor-analytics.html"><i class="fa-solid fa-chart-line"></i>Analytics</a>
+      <a href="welcome.html" id="sign"><i class="fa-solid fa-sign-out-alt"></i>Sign Out</a>
+    </nav>
+
+    <main class="main-content">
+      <div class="top">
+        <div>
+          <h1 class="page-title">Courses</h1>
+          <p class="sub">Create and manage your courses.</p>
+        </div>
+
+        <button class="btn primary" id="openCreateModalBtn">+ Create Course</button>
+      </div>
+
+      <section class="toolbar">
+        <input class="search" id="courseSearch" type="search" placeholder="Search courses..." />
+        <select class="select" id="statusFilter">
+          <option value="all">All statuses</option>
+          <option value="active">Active</option>
+          <option value="disabled">Disabled</option>
+        </select>
+      </section>
+
+      <section class="grid" id="coursesGrid">
+        <div class="loading">Loading courses...</div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; Student Course Companion</p>
+    </footer>
+  </div>
+
+  <dialog class="modal" id="courseModal">
+    <form class="form" id="courseForm">
+      <div class="modal-head">
+        <h2 id="modalTitle">Create a course</h2>
+
+        <button
+          type="button"
+          class="icon-btn"
+          aria-label="Close"
+          id="closeModalBtn"
+        >
+          ✕
+        </button>
+      </div>
+
+      <input type="hidden" id="courseId" />
+
+      <label>
+        Course name
+        <input id="courseName" required type="text" placeholder="Software Engineering" />
+      </label>
+
+      <div class="row">
+        <label>
+          Course code
+          <input id="courseCode" required type="text" placeholder="SOEN341" />
+        </label>
+
+        <label>
+          Term
+          <input id="courseTerm" required type="text" placeholder="Fall 2025" />
+        </label>
+      </div>
+
+      <div class="row">
+        <label>
+          Section (optional)
+          <input id="courseSection" type="text" placeholder="AA" />
+        </label>
+
+        <label>
+          Status
+          <select id="courseStatus">
+            <option value="Active">Active</option>
+            <option value="Disabled">Disabled</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        Grading template
+        <select id="courseTemplateSelect">
+          <option value="">Select the template</option>
+        </select>
+      </label>
+
+
+      <label>
+        Description (optional)
+        <textarea id="courseDescription" rows="3" placeholder="Short description..."></textarea>
+      </label>
+
+      <div class="actions">
+        <button type="button" class="btn ghost" id="cancelModalBtn">
+          Cancel
+        </button>
+
+        <button type="submit" class="btn primary" id="saveCourseBtn">
+          Create
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+  //DARK MODE
+  const themeToggle = document.getElementById("themeToggle");
+
+// load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️ Light Mode";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "☀️ Light Mode";
+  } else {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  }
+});
+  
+    const professorUser = JSON.parse(localStorage.getItem("professorUser") || "null");
+
+if (!professorUser) {
+  window.location.href = "professor-login.html";
+}
+
+    const API_BASE = "http://localhost:3000/courses";
+
+
+    const layout = document.getElementById("layout");
+    const bars = document.getElementById("bars");
+    const times = document.getElementById("times");
+
+    const coursesGrid = document.getElementById("coursesGrid");
+    const courseSearch = document.getElementById("courseSearch");
+    const statusFilter = document.getElementById("statusFilter");
+
+   
+    
+    const courseModal = document.getElementById("courseModal");
+    const openCreateModalBtn = document.getElementById("openCreateModalBtn");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const cancelModalBtn = document.getElementById("cancelModalBtn");
+    const courseForm = document.getElementById("courseForm");
+    const modalTitle = document.getElementById("modalTitle");
+    const saveCourseBtn = document.getElementById("saveCourseBtn");
+
+    const courseIdInput = document.getElementById("courseId");
+    const courseNameInput = document.getElementById("courseName");
+    const courseCodeInput = document.getElementById("courseCode");
+    const courseTermInput = document.getElementById("courseTerm");
+    const courseSectionInput = document.getElementById("courseSection");
+    const courseStatusInput = document.getElementById("courseStatus");
+    const courseDescriptionInput = document.getElementById("courseDescription");
+
+    let allCourses = [];
+    let editingCourseId = null;
+
+    bars.addEventListener("click", () => {
+      layout.classList.remove("collapsed");
+    });
+
+    times.addEventListener("click", () => {
+      layout.classList.add("collapsed");
+    });
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function resetForm() {
+      editingCourseId = null;
+      courseIdInput.value = "";
+      courseNameInput.value = "";
+      courseCodeInput.value = "";
+      courseTermInput.value = "";
+      courseSectionInput.value = "";
+      courseStatusInput.value = "Active";
+      courseDescriptionInput.value = "";
+      modalTitle.textContent = "Create a course";
+      saveCourseBtn.textContent = "Create";
+    }
+
+    function openCreateModal() {
+      resetForm();
+      loadTemplatesIntoCourseDropdown();
+      courseModal.showModal();
+    }
+
+    function openEditModal(course) {
+      editingCourseId = course.id;
+      courseIdInput.value = course.id;
+      courseNameInput.value = course.name || "";
+      courseCodeInput.value = course.code || "";
+      courseTermInput.value = course.term || "";
+      courseSectionInput.value = course.section || "";
+      courseStatusInput.value = course.status || "Active";
+      courseDescriptionInput.value = course.description || "";
+            modalTitle.textContent = "Edit course";
+      saveCourseBtn.textContent = "Save Changes";
+      loadTemplatesIntoCourseDropdown(course.template_name || "");
+      courseModal.showModal();
+      saveCourseBtn.textContent = "Save Changes";
+      courseModal.showModal();
+    }
+
+    function closeModal() {
+      courseModal.close();
+      resetForm();
+    }
+
+    openCreateModalBtn.addEventListener("click", openCreateModal);
+    closeModalBtn.addEventListener("click", closeModal);
+    cancelModalBtn.addEventListener("click", closeModal);
+
+    function badgeFor(status) {
+      const s = String(status || "Active").toLowerCase();
+      if (s === "disabled") {
+        return '<span class="badge disabled">Disabled</span>';
+      }
+      return '<span class="badge active">Active</span>';
+    }
+
+    function courseMatchesFilters(course, searchText, statusValue) {
+      const text = `${course.name || ""} ${course.code || ""} ${course.term || ""} ${course.section || ""}`.toLowerCase();
+      const qOk = !searchText || text.includes(searchText.toLowerCase());
+
+      const currentStatus = String(course.status || "Active").toLowerCase();
+      const statusOk =
+        statusValue === "all" ||
+        (statusValue === "active" && currentStatus === "active") ||
+        (statusValue === "disabled" && currentStatus === "disabled");
+
+      return qOk && statusOk;
+    }
+
+    function renderCourses() {
+      const q = courseSearch.value.trim();
+      const s = statusFilter.value;
+
+      const filtered = allCourses.filter(course => courseMatchesFilters(course, q, s));
+
+      if (!filtered.length) {
+        coursesGrid.innerHTML = '<div class="empty">No courses found.</div>';
+        return;
+      }
+
+      coursesGrid.innerHTML = filtered.map(course => {
+        const metaBits = [];
+        if (course.term) metaBits.push(course.term);
+        if (course.section) metaBits.push(`Section ${course.section}`);
+        const meta = metaBits.join(" · ");
+
+        const desc = course.description && course.description.trim()
+          ? `<p class="desc">${escapeHtml(course.description)}</p>`
+          : `<p class="desc muted">No description.</p>`;
+
+        const toggleLabel = String(course.status).toLowerCase() === "disabled" ? "Enable" : "Disable";
+
+        return `
+          <article class="card">
+            <div class="card-top">
+              <div>
+                <h3>${escapeHtml(course.code)} — ${escapeHtml(course.name)}</h3>
+                <p class="meta">${meta ? escapeHtml(meta) : "&nbsp;"}</p>
+              </div>
+              ${badgeFor(course.status)}
+            </div>
+
+            ${desc}
+
+            <div class="card-actions">
+              <button class="btn small" data-action="edit" data-id="${course.id}">Edit</button>
+              <button class="btn small" data-action="toggle" data-id="${course.id}">${toggleLabel}</button>
+              <button class="btn small danger" data-action="delete" data-id="${course.id}">Delete</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    async function loadCourses() {
+      try {
+        const response = await fetch(`${API_BASE}?created_by=${professorUser.id}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load courses");
+        }
+
+        allCourses = data;
+        renderCourses();
+      } catch (error) {
+        console.error("Load courses error:", error);
+        coursesGrid.innerHTML = '<div class="empty">Could not load courses.</div>';
+      }
+    }
+
+    async function createCourse(courseData) {
+      const response = await fetch(API_BASE, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(courseData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create course");
+      }
+
+      return data;
+    }
+
+    async function updateCourse(id, courseData) {
+      const response = await fetch(`${API_BASE}/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(courseData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update course");
+      }
+
+      return data;
+    }
+
+     async function deleteCourse(id) {
+      const response = await fetch(`${API_BASE}/${id}?created_by=${professorUser.id}`, {
+        method: "DELETE"
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete course");
+      }
+
+      return data;
+    }
+
+    courseForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+
+      
+
+      const courseData = {
+          name: courseNameInput.value.trim(),
+          code: courseCodeInput.value.trim(),
+          term: courseTermInput.value.trim(),
+          section: courseSectionInput.value.trim(),
+          status: courseStatusInput.value,
+          description: courseDescriptionInput.value.trim(),
+          template_name: document.getElementById("courseTemplateSelect").value || null,
+          instructor_name: professorUser?.name || "",
+          created_by: professorUser?.id || null
+        };
+
+      try {
+        if (editingCourseId) {
+          await updateCourse(editingCourseId, courseData);
+        } else {
+          await createCourse(courseData);
+        }
+
+        closeModal();
+        await loadCourses();
+      } catch (error) {
+        console.error("Save course error:", error);
+        alert(error.message);
+      }
+    });
+
+    coursesGrid.addEventListener("click", async (e) => {
+      const button = e.target.closest("button[data-action]");
+      if (!button) return;
+
+      const action = button.getAttribute("data-action");
+      const id = Number(button.getAttribute("data-id"));
+      const course = allCourses.find(c => Number(c.id) === id);
+
+      if (!course) return;
+
+      try {
+        if (action === "edit") {
+          openEditModal(course);
+          return;
+        }
+
+        if (action === "toggle") {
+         const updatedCourse = {
+            name: course.name,
+            code: course.code,
+            term: course.term,
+            section: course.section || "",
+            status: String(course.status).toLowerCase() === "disabled" ? "Active" : "Disabled",
+            description: course.description || "",
+            template_name: course.template_name || null,
+            instructor_name: professorUser?.name || "",
+            created_by: professorUser?.id || null
+          };
+          await updateCourse(id, updatedCourse);
+          await loadCourses();
+          return;
+        }
+
+        if (action === "delete") {
+          const confirmed = window.confirm("Are you sure you want to delete this course?");
+          if (!confirmed) return;
+
+          await deleteCourse(id);
+          await loadCourses();
+        }
+      } catch (error) {
+        console.error("Course action error:", error);
+        alert(error.message);
+      }
+    });
+
+    courseSearch.addEventListener("input", renderCourses);
+    statusFilter.addEventListener("change", renderCourses);
+
+    document.addEventListener("DOMContentLoaded", loadCourses);
+
+   function loadTemplatesIntoCourseDropdown(selectedTemplate = "")  {
+  const select = document.getElementById("courseTemplateSelect");
+
+  if (!select) return;
+
+  select.innerHTML = "";
+
+  const defaultTemplates = [
+    { title: "Weekly Modules (12 weeks)" },
+    { title: "Project-Based Course" },
+    { title: "Exam-Heavy Structure" }
+  ];
+
+  const customTemplates =
+    JSON.parse(localStorage.getItem("professor_custom_templates_v1")) || [];
+
+  const allTemplates = [...defaultTemplates, ...customTemplates];
+
+  const noneOption = document.createElement("option");
+  noneOption.value = "";
+  noneOption.textContent = "No template";
+  select.appendChild(noneOption);
+
+  allTemplates.forEach(template => {
+    const option = document.createElement("option");
+    option.value = template.title;
+    option.textContent = template.title;
+    select.appendChild(option);
+  });
+   select.value = selectedTemplate || "";
+}
+
+  </script>
+</body>
+</html>
